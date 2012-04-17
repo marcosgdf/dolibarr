@@ -69,7 +69,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here delacaration of dictionnaries properties
 
 // Sort order to show dictionnary (0 is space). All other dictionnaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,22,20,18,21,0,15);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,23);
 
 // Name of SQL tables of dictionnaries
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -94,6 +94,7 @@ $tabname[19]= MAIN_DB_PREFIX."c_effectif";
 $tabname[20]= MAIN_DB_PREFIX."c_input_method";
 $tabname[21]= MAIN_DB_PREFIX."c_availability";
 $tabname[22]= MAIN_DB_PREFIX."c_input_reason";
+$tabname[23]= MAIN_DB_PREFIX."c_units";
 
 // Dictionary labels
 $tablib[1] = "DictionnaryCompanyJuridicalType";
@@ -118,6 +119,7 @@ $tablib[19]= "DictionnaryStaff";
 $tablib[20]= "DictionnaryOrderMethods";
 $tablib[21]= "DictionnaryAvailability";
 $tablib[22]= "DictionnarySource";
+$tablib[23]= "DictionnaryUnits";
 
 // Requete pour extraction des donnees des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.code as pays_code, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -142,6 +144,7 @@ $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
 $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
+$tabsql[23]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";
@@ -166,6 +169,7 @@ $tabsqlsort[19]="id ASC";
 $tabsqlsort[20]="code ASC, libelle ASC";
 $tabsqlsort[21]="code ASC, label ASC";
 $tabsqlsort[22]="code ASC, label ASC";
+$tabsqlsort[23]="code ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -190,6 +194,7 @@ $tabfield[19]= "code,libelle";
 $tabfield[20]= "code,libelle";
 $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
+$tabfield[23]= "code,label,short_label";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -214,6 +219,7 @@ $tabfieldvalue[19]= "code,libelle";
 $tabfieldvalue[20]= "code,libelle";
 $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
+$tabfieldvalue[23]= "code,label,short_label";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -238,6 +244,7 @@ $tabfieldinsert[19]= "code,libelle";
 $tabfieldinsert[20]= "code,libelle";
 $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
+$tabfieldinsert[23]= "code,label,short_label";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -264,6 +271,7 @@ $tabrowid[19]= "id";
 $tabrowid[20]= "";
 $tabrowid[21]= "rowid";
 $tabrowid[22]= "rowid";
+$tabrowid[23]= "";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = true;
@@ -288,7 +296,7 @@ $tabcond[19]= $conf->societe->enabled;
 $tabcond[20]= $conf->fournisseur->enabled;
 $tabcond[21]= $conf->propal->enabled;
 $tabcond[22]= $conf->commande->enabled||$conf->propal->enabled;
-
+$tabcond[23]= $conf->product->enabled;
 
 complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond);
 

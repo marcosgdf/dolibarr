@@ -139,6 +139,8 @@ class Product extends CommonObject
 	//! Contains detail of stock of product into each warehouse
 	var $stock_warehouse=array();
 
+	//unit
+	var $unit;
 
 	/**
 	 *  Constructor
@@ -287,6 +289,7 @@ class Product extends CommonObject
 				$sql.= ", tosell";
 				$sql.= ", canvas";
 				$sql.= ", finished";
+				$sql.= ", fk_unit";
 				$sql.= ") VALUES (";
 				$sql.= $this->db->idate($now);
 				$sql.= ", ".$conf->entity;
@@ -303,8 +306,9 @@ class Product extends CommonObject
 				$sql.= ", ".$this->status_buy;
 				$sql.= ", '".$this->canvas."'";
 				$sql.= ", ".$this->finished;
+				$sql.= ", ".$this->unit;
 				$sql.= ")";
-
+				
 				dol_syslog(get_class($this)."::Create sql=".$sql);
 				$result = $this->db->query($sql);
 				if ( $result )
@@ -461,6 +465,7 @@ class Product extends CommonObject
 		$sql.= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 		$sql.= ",accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
+		$sql.= ",fk_unit= " . $this->unit;
 		$sql.= " WHERE rowid = " . $id;
 
 		dol_syslog(get_class($this)."update sql=".$sql);
@@ -1009,13 +1014,13 @@ class Product extends CommonObject
 			dol_print_error(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
-
+//TODO: add units
 		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
+		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity";
+		$sql.= " datec, tms, import_key, fk_unit, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		else
@@ -1086,7 +1091,7 @@ class Product extends CommonObject
 				$this->date_modification		= $obj->tms;
 				$this->import_key				= $obj->import_key;
 				$this->entity					= $obj->entity;
-
+				$this->unit						= $obj->unit;
 				$this->db->free($resql);
 
 				// multilangs

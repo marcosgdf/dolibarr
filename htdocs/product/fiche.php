@@ -196,7 +196,7 @@ if (empty($reshook))
             $object->volume_units       	= $_POST["volume_units"];
             $object->finished           	= $_POST["finished"];
             $object->hidden             	= $_POST["hidden"]=='yes'?1:0;
-
+			$object->unit					= $_POST["units"];
             // MultiPrix
             if($conf->global->PRODUIT_MULTIPRICES)
             {
@@ -272,6 +272,7 @@ if (empty($reshook))
                 $object->volume_units       = $_POST["volume_units"];
                 $object->finished           = $_POST["finished"];
                 $object->hidden             = $_POST["hidden"]=='yes'?1:0;
+                $object->unit               = $_POST["units"];
 
                 // Get extra fields
                 foreach($_POST as $key => $value)
@@ -829,8 +830,12 @@ else
         }
         else
         {
+			//units
             print '<table class="border" width="100%">';
-
+			print '<tr><td>Unit</td>';
+			print '<td>';
+			print $form->select_units("units");
+			print '</td></tr>';
             // PRIX
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$object->price.'">';
@@ -1020,6 +1025,7 @@ else
             $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
             $doleditor->Create();
             print "</td></tr>";
+            //TODO afficher unités ici
             print '</table>';
 
             print '<br>';
@@ -1251,7 +1257,7 @@ else
 
             // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
-
+			//TODO affichier unités ici
             print "</table>\n";
 
             dol_fiche_end();

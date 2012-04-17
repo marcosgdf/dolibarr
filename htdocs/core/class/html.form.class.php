@@ -1995,7 +1995,29 @@ class Form
 
         return $return;
     }
-
+    
+    function select_units($selected = '', $htmlname = 'units')
+    {
+		print $this->load_units($selected, $htmlname);
+	}
+	
+	function load_units($selected = '', $htmlname= 'units')
+	{
+		
+		$return= '<select class="flat" name="'.$htmlname.'">';
+		$sql = 'select rowid, label from '.MAIN_DB_PREFIX.'c_units where active=1';
+		$resql = $this->db->query($sql);
+		if($resql && $this->db->num_rows($resql) > 0)	
+		{
+			
+			while($res = $this->db->fetch_array($resql, MYSQL_NUM))
+			{
+				$return.='<option value='.$res[0].'>'.$res[1].'</option>';
+			}
+			$return.='</select>';
+		}
+		return $return;
+	}
     /**
      *  Return a HTML select list of bank accounts
      *
