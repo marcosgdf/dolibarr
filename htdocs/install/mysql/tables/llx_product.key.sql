@@ -24,3 +24,4 @@ ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_ref (ref, entity);
 ALTER TABLE llx_product ADD INDEX idx_product_label (label);
 ALTER TABLE llx_product ADD INDEX idx_product_barcode (barcode);
 ALTER TABLE llx_product ADD INDEX idx_product_import_key (import_key);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
