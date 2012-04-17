@@ -1091,7 +1091,7 @@ class Product extends CommonObject
 				$this->date_modification		= $obj->tms;
 				$this->import_key				= $obj->import_key;
 				$this->entity					= $obj->entity;
-				$this->unit						= $obj->unit;
+				$this->unit						= $obj->fk_unit;
 				$this->db->free($resql);
 
 				// multilangs
@@ -1610,6 +1610,27 @@ class Product extends CommonObject
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
 		return $this->_get_stats($sql,$mode);
+	}
+
+	//TODO return label of the product's unit
+	
+	function getUnitLabel()
+	{
+		$sql = 'select label from '.MAIN_DB_PREFIX.'c_units where rowid ="'.$this->unit.'"';
+		$resql = $this->db->query($sql);
+		if($resql && $resql->num_rows > 0)
+		{
+			$res = $this->db->fetch_array($resql);
+			$label = $res['label'];
+			$this->db->free($resql);
+			return $label;
+		}
+		
+		else{
+			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
+		}
+		
 	}
 
 	/**

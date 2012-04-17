@@ -1026,6 +1026,10 @@ else
             $doleditor->Create();
             print "</td></tr>";
             //TODO afficher unités ici
+            print '<tr><td>Unit</td>';
+			print '<td>';
+			print $form->select_units("units");
+			print '</td></tr>';
             print '</table>';
 
             print '<br>';
