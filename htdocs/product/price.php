@@ -263,10 +263,6 @@ else
 	print '</td></tr>';
 }
 
-print '<tr><td>Unit</td><td>';
-print $object->getUnitLabel();
-print '</td></tr>';
-
 // Status (to sell)
 print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
 print $object->getLibStatut(2,0);

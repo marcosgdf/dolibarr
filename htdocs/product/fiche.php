@@ -819,6 +819,13 @@ else
         $doleditor->Create();
 
         print "</td></tr>";
+        
+		// Units
+		print '<tr><td>'.$langs->trans('Unit').'</td>';
+		print '<td>';
+		print $form->select_units("units");
+		print '</td></tr>';
+	
         print '</table>';
 
         print '<br>';
@@ -830,12 +837,7 @@ else
         }
         else
         {
-			//units
-            print '<table class="border" width="100%">';
-			print '<tr><td>Unit</td>';
-			print '<td>';
-			print $form->select_units("units");
-			print '</td></tr>';
+			print '<table class="border" width="100%">';
             // PRIX
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$object->price.'">';
@@ -995,7 +997,7 @@ else
                 print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
                 print '</td></tr>';
             }
-
+            
             // Customs code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2"><input name="customcode" size="10" value="'.$object->customcode.'"></td></tr>';
 
@@ -1026,7 +1028,7 @@ else
             $doleditor->Create();
             print "</td></tr>";
             //TODO afficher unités ici
-            print '<tr><td>Unit</td>';
+            print '<tr><td>'.$langs->trans('Unit').'</td>';
 			print '<td>';
 			print $form->select_units("units");
 			print '</td></tr>';
@@ -1238,6 +1240,11 @@ else
                 }
                 print "</td></tr>\n";
             }
+
+            // Unit
+			print '<tr><td>'.$langs->trans('Unit').'</td><td>';
+			print $object->get_unit_label();
+			print '</td></tr>';
 
             // Customs code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';

@@ -74,6 +74,10 @@
 		<input size="2" type="text" class="flat" name="qty"	value="<?php echo $line->qty; ?>" />
 	<?php } else { ?> &nbsp; <?php } ?>
 	</td>
+	
+	<td align="left" nowrap="nowrap">
+	<?php echo $line->get_unit_label();?>
+	</td>
 
 	<td align="right" nowrap>
 	<?php if (($line->info_bits & 2) != 2) { ?>

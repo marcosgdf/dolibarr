@@ -46,6 +46,10 @@
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;
 		else echo '&nbsp;';	?>
 	</td>
+	
+	<td align="left" nowrap="nowrap">
+	<?php echo $line->get_unit_label();?>
+	</td>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
 	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>

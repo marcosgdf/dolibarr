@@ -65,6 +65,8 @@
 	<?php } ?>
 	</td>
 
+	<td align="left"><?php echo $form->select_units($line->fk_unit, "units") ?></td>
+
 	<td align="right" nowrap>
 	<?php if (($line->info_bits & 2) != 2) { ?>
 		<input size="1" type="text" class="flat" name="remise_percent" value="<?php echo $line->remise_percent; ?>">%

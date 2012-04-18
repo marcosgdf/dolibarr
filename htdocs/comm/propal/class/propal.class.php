@@ -198,6 +198,7 @@ class Propal extends CommonObject
             $line->subprice=$price;
             $line->remise_percent=$remise_percent;
             $line->tva_tx=$tva_tx;
+			$line->fk_unit=$prod->fk_unit;
 
             $this->products[]=$line;
         }
@@ -306,7 +307,7 @@ class Propal extends CommonObject
      *
      *    	@see       	add_product
      */
-    function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0)
+    function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_unit=1)
     {
         global $conf;
 
@@ -394,6 +395,7 @@ class Propal extends CommonObject
             $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
+			$this->line->fk_unit = $fk_unit;
 
             // Mise en option de la ligne
             //if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
@@ -452,7 +454,7 @@ class Propal extends CommonObject
      *  @param		int			$skip_update_total	Skip update total
      *  @return     int     		        		0 if OK, <0 if KO
      */
-    function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0)
+    function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $fk_unit=1, $skip_update_total=0)
     {
         global $conf,$user,$langs;
 
@@ -525,6 +527,8 @@ class Propal extends CommonObject
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
 
+			$this->line->fk_unit            = $fk_unit;
+
             // TODO deprecated
             $this->line->price=$price;
             $this->line->remise=$remise;
@@ -582,6 +586,8 @@ class Propal extends CommonObject
             }
             else
             {
+				 $this->error="Failed to fetch line";
+				 dol_syslog(get_class($this)."::deleteline ".$line->delete(), LOG_ERR);
                 return -1;
             }
         }
@@ -738,7 +744,8 @@ class Propal extends CommonObject
                             $this->lines[$i]->product_type,
                             $this->lines[$i]->rang,
                             $this->lines[$i]->special_code,
-                            $fk_parent_line
+                            $fk_parent_line,
+                            $this->lines[$i]->fk_unit
                         );
 
                         if ($result < 0)
@@ -1058,6 +1065,7 @@ class Propal extends CommonObject
                 */
                 $sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
                 $sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang, d.product_type,";
+                $sql.= " d.fk_unit,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -1110,6 +1118,8 @@ class Propal extends CommonObject
                         $line->product_label	= $objp->product_label;
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;
+
+						$line->fk_unit          = $objp->fk_unit;
 
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
@@ -2180,6 +2190,7 @@ class Propal extends CommonObject
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
             $line->localtax2_tx=0;
+            $line->fk_unit=1;
             if ($xnbp == 2)
             {
                 $line->total_ht=50;
@@ -2346,6 +2357,7 @@ class Propal extends CommonObject
         $sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang,';
+        $sql.= ' pt.fk_unit,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
         $sql.= ' p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -2387,6 +2399,7 @@ class Propal extends CommonObject
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
+                $this->lines[$i]->fk_unit			= $obj->fk_unit;
 
                 $i++;
             }
@@ -2460,6 +2473,8 @@ class PropaleLigne
     var $localtax2_tx;
     var $total_localtax1;
     var $total_localtax2;
+    
+    var $fk_unit;
 
     var $skip_update_total; // Skip update price total for special lines
 
@@ -2484,6 +2499,7 @@ class PropaleLigne
         $sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
         $sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
         $sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.marge_tx, pd.marque_tx, pd.special_code, pd.rang,';
+        $sql.= ' pd.fk_unit,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
@@ -2522,6 +2538,8 @@ class PropaleLigne
             $this->product_label	= $objp->product_libelle;
             $this->product_desc		= $objp->product_desc;
 
+			$this->fk_unit          = $objp->fk_unit;
+
             $this->db->free($result);
         }
         else
@@ -2556,6 +2574,7 @@ class PropaleLigne
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+        if (empty($this->fk_unit)) $this->fk_unit=1;
 
         // Check parameters
         if ($this->product_type < 0) return -1;
@@ -2567,7 +2586,8 @@ class PropaleLigne
         $sql.= ' (fk_propal, fk_parent_line, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
-        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, special_code, rang, marge_tx, marque_tx)';
+        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, special_code, rang, marge_tx, marque_tx,';
+        $sql.= ' fk_unit)';
         $sql.= " VALUES (".$this->fk_propal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
@@ -2591,7 +2611,8 @@ class PropaleLigne
         if (isset($this->marge_tx)) $sql.= ' '.$this->marge_tx.',';
         else $sql.= ' null,';
         if (isset($this->marque_tx)) $sql.= ' '.$this->marque_tx;
-        else $sql.= ' null';
+        else $sql.= ' null,';
+        $sql.= ' '.$this->fk_unit;
         $sql.= ')';
 
         dol_syslog("PropaleLigne::insert sql=$sql");
@@ -2713,6 +2734,7 @@ class PropaleLigne
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
+        $sql.= " , fk_unit=".$this->fk_unit;
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
@@ -2776,6 +2798,36 @@ class PropaleLigne
             return -2;
         }
     }
+    
+    /**
+     *	Returns the text label from units dictionnary
+     *
+     *	@return		int		<0 if ko, label if ok
+     */
+	function get_unit_label()
+	{
+		global $langs;
+		
+		$langs->load('products');
+		
+		$this->db->begin();
+		        
+		$sql = 'select label from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$resql = $this->db->query($sql);
+		if($resql && $resql->num_rows > 0)
+		{
+			$res = $this->db->fetch_array($resql);
+			$label = $res['label'];
+			$this->db->free($resql);
+			return $langs->trans($label);
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::get_unit_label Error ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 }
 

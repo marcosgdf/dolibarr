@@ -707,6 +707,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
+		// Replaces $fk_unit with the product's
 		if ($_POST['idprod'])
 		{
 			$prod = new Product($db);
@@ -770,6 +771,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			$desc.= ($desc && $_POST['np_desc']) ? ((dol_textishtml($desc) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
 			$desc.= $_POST['np_desc'];
 			$type = $prod->type;
+			$fk_unit = $prod->unit;
 		}
 		else
 		{
@@ -780,6 +782,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			$type=$_POST["type"];
 			$localtax1_tx=get_localtax($tva_tx,1,$object->client);
 			$localtax2_tx=get_localtax($tva_tx,2,$object->client);
+			$fk_unit=$_POST['units'];
 		}
 
 		$info_bits=0;
@@ -808,7 +811,8 @@ else if ($action == "addline" && $user->rights->propale->creer)
     			$type,
     			-1,
     			0,
-    			$_POST['fk_parent_line']
+    			$_POST['fk_parent_line'],
+    			$fk_unit
 			);
 
 			if ($result > 0)
@@ -834,6 +838,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				unset($_POST['np_price']);
 				unset($_POST['dp_desc']);
 				unset($_POST['np_tva_tx']);
+				unset($_POST['units']);
 			}
 			else
 			{
@@ -895,7 +900,8 @@ else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["sa
     		'HT',
     		$info_bits,
     		$special_code,
-    		$_POST['fk_parent_line']
+    		$_POST['fk_parent_line'],
+    		$_POST["units"]
 		);
 
 		// Define output language

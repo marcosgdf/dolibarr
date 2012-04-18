@@ -18,7 +18,7 @@
 -- ========================================================================
 
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('P','piece','p', 1);
-INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('SET','set','set', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('SET','set','se', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('S','second','s', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('H','hour','h', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('D','day','d', 1);
@@ -26,8 +26,8 @@ INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('KG','kilogr
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('G','gram','g', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M','meter','m', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('LM','linear meter','lm', 1);
-INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M2','square meter','m²', 1);
-INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M3','cubic meter','m³', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M2','square meter','m2', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M3','cubic meter','m3', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('L','liter','l', 1);
 
 

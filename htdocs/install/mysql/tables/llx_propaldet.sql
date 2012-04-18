@@ -49,7 +49,8 @@ create table llx_propaldet
   marque_tx         double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
 
   special_code      integer      DEFAULT 0,          -- code pour les lignes speciales
-  rang              integer      DEFAULT 0           -- ordre affichage sur la propal
+  rang              integer      DEFAULT 0,           -- ordre affichage sur la propal
+  fk_unit           integer      DEFAULT 1           -- lien vers table des unités
 )ENGINE=innodb;
 
 -- 

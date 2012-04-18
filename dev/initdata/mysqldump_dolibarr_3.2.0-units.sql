@@ -5337,6 +5337,7 @@ CREATE TABLE `llx_propaldet` (
   `marque_tx` double(6,3) DEFAULT '0.000',
   `special_code` int(10) unsigned DEFAULT '0',
   `rang` int(11) DEFAULT '0',
+  `fk_unit` integer DEFAULT '1',
   PRIMARY KEY (`rowid`),
   KEY `idx_propaldet_fk_propal` (`fk_propal`),
   KEY `idx_propaldet_fk_product` (`fk_product`),
