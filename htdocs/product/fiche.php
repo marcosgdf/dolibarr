@@ -196,7 +196,7 @@ if (empty($reshook))
             $object->volume_units       	= $_POST["volume_units"];
             $object->finished           	= $_POST["finished"];
             $object->hidden             	= $_POST["hidden"]=='yes'?1:0;
-			$object->unit					= $_POST["units"];
+			$object->fk_unit				= $_POST["units"];
             // MultiPrix
             if($conf->global->PRODUIT_MULTIPRICES)
             {
@@ -272,7 +272,7 @@ if (empty($reshook))
                 $object->volume_units       = $_POST["volume_units"];
                 $object->finished           = $_POST["finished"];
                 $object->hidden             = $_POST["hidden"]=='yes'?1:0;
-                $object->unit               = $_POST["units"];
+                $object->fk_unit            = $_POST["units"];
 
                 // Get extra fields
                 foreach($_POST as $key => $value)

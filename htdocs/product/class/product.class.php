@@ -140,7 +140,7 @@ class Product extends CommonObject
 	var $stock_warehouse=array();
 
 	//unit
-	var $unit;
+	var $fk_unit;
 
 	/**
 	 *  Constructor
@@ -306,7 +306,7 @@ class Product extends CommonObject
 				$sql.= ", ".$this->status_buy;
 				$sql.= ", '".$this->canvas."'";
 				$sql.= ", ".$this->finished;
-				$sql.= ", ".$this->unit;
+				$sql.= ", ".$this->fk_unit;
 				$sql.= ")";
 				
 				dol_syslog(get_class($this)."::Create sql=".$sql);
@@ -465,7 +465,7 @@ class Product extends CommonObject
 		$sql.= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 		$sql.= ",accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
-		$sql.= ",fk_unit= " . $this->unit;
+		$sql.= ",fk_unit= " . $this->fk_unit;
 		$sql.= " WHERE rowid = " . $id;
 
 		dol_syslog(get_class($this)."update sql=".$sql);
@@ -1014,7 +1014,7 @@ class Product extends CommonObject
 			dol_print_error(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
-//TODO: add units
+
 		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
@@ -1091,7 +1091,7 @@ class Product extends CommonObject
 				$this->date_modification		= $obj->tms;
 				$this->import_key				= $obj->import_key;
 				$this->entity					= $obj->entity;
-				$this->unit						= $obj->fk_unit;
+				$this->fk_unit					= $obj->fk_unit;
 				$this->db->free($resql);
 
 				// multilangs
@@ -1625,7 +1625,7 @@ class Product extends CommonObject
 		
 		$this->db->begin();
 		        
-		$sql = 'select label from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->unit;
+		$sql = 'select label from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
 		if($resql && $resql->num_rows > 0)
 		{

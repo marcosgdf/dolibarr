@@ -613,7 +613,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
             $desc.= ($desc && $_POST['np_desc']) ? ((dol_textishtml($desc) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
             $desc.= $_POST['np_desc'];
             $type = $prod->type;
-            $fk_unit = $prod->unit;
+            $fk_unit = $prod->fk_unit;
         }
         else
         {

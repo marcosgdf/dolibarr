@@ -1179,7 +1179,7 @@ class Commande extends CommonObject
             $line->ref=$prod->ref;
             $line->libelle=$prod->libelle;
             $line->product_desc=$prod->description;
-            $line->fk_unit=$prod->unit;
+            $line->fk_unit=$prod->fk_unit;
 
             // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
             // Save the start and end date of the line in the object
