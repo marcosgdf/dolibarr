@@ -47,6 +47,7 @@ create table llx_commandedet
   marque_tx          double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
   special_code       integer UNSIGNED DEFAULT 0,      -- code pour les lignes speciales
   rang               integer      DEFAULT 0,
+  fk_unit            integer      DEFAULT 1,           -- lien vers table des unités
   import_key         varchar(14)
 )ENGINE=innodb;
 

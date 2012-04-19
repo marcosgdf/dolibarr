@@ -293,7 +293,8 @@ else if ($action == 'add' && $user->rights->commande->creer)
                         $product_type,
                         $lines[$i]->rang,
                         $lines[$i]->special_code,
-                        $fk_parent_line
+                        $fk_parent_line,
+                        $lines[$i]->fk_unit
                     );
 
                     if ($result < 0)
@@ -612,6 +613,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
             $desc.= ($desc && $_POST['np_desc']) ? ((dol_textishtml($desc) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
             $desc.= $_POST['np_desc'];
             $type = $prod->type;
+            $fk_unit = $prod->unit;
         }
         else
         {
@@ -620,6 +622,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
             $tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
             $desc=$_POST['dp_desc'];
             $type=$_POST["type"];
+            $fk_unit=$_POST['units'];
         }
 
         // Local Taxes
@@ -660,7 +663,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
                     $type,
                     -1,
                     '',
-                    $_POST['fk_parent_line']
+                    $_POST['fk_parent_line'],
+                    $fk_unit
                 );
 
                 if ($result > 0)
@@ -689,6 +693,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
                     unset($_POST['np_desc']);
                     unset($_POST['np_price']);
                     unset($_POST['np_tva_tx']);
+                    unset($POST['units']);
                 }
                 else
                 {
@@ -773,7 +778,8 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
             $date_start,
             $date_end,
             $type,
-            $_POST['fk_parent_line']
+            $_POST['fk_parent_line'],
+            $POST['units']
         );
 
         if ($result >= 0)

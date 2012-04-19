@@ -691,7 +691,8 @@ class Commande extends CommonObject
                         $this->lines[$i]->product_type,
                         $this->lines[$i]->rang,
                         $this->lines[$i]->special_code,
-                        $fk_parent_line
+                        $fk_parent_line,
+                        $this->lines[$i]->fk_unit
                     );
                     if ($result < 0)
                     {
@@ -905,6 +906,7 @@ class Commande extends CommonObject
                 $line->rang              = $object->lines[$i]->rang;
                 $line->special_code      = $object->lines[$i]->special_code;
                 $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
+                $line->fk_unit			 = $object->lines[$i]->fk_unit;
 
                 $this->lines[$i] = $line;
             }
@@ -998,9 +1000,9 @@ class Commande extends CommonObject
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0)
+    function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_unit=1)
     {
-        dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
+        dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type, fk_unit=$fk_unit", LOG_DEBUG);
 
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
@@ -1090,6 +1092,7 @@ class Commande extends CommonObject
             $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
+            $this->line->fk_unit=$fk_unit;
 
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
@@ -1176,6 +1179,7 @@ class Commande extends CommonObject
             $line->ref=$prod->ref;
             $line->libelle=$prod->libelle;
             $line->product_desc=$prod->description;
+            $line->fk_unit=$prod->unit;
 
             // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
             // Save the start and end date of the line in the object
@@ -1433,6 +1437,7 @@ class Commande extends CommonObject
         $sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
         $sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits, l.special_code,';
         $sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
+        $sql.= ' l.fk_unit,';
         $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -1486,6 +1491,7 @@ class Commande extends CommonObject
                 $line->product_label	= $objp->product_label;
                 $line->product_desc     = $objp->product_desc; 		// Description produit
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
+                $line->fk_unit          = $objp->fk_unit;
 
                 $line->date_start       = $this->db->jdate($objp->date_start);
                 $line->date_end         = $this->db->jdate($objp->date_end);
@@ -2124,7 +2130,7 @@ class Commande extends CommonObject
      *  @param		int				$skip_update_total	Skip update of total
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $fk_unit=1, $skip_update_total=0)
     {
         global $conf;
 
@@ -2205,6 +2211,7 @@ class Commande extends CommonObject
             $this->line->product_type=$type;
             $this->line->fk_parent_line=$fk_parent_line;
             $this->line->skip_update_total=$skip_update_total;
+            $this->line->fk_unit=$fk_unit;
 
             // TODO deprecated
             $this->line->price=$price;
@@ -2625,6 +2632,7 @@ class Commande extends CommonObject
             $line->subprice=100;
             $line->price=100;
             $line->tva_tx=19.6;
+            $line->fk_unit=1;
             if ($xnbp == 2)
             {
                 $line->total_ht=50;
@@ -2707,6 +2715,7 @@ class Commande extends CommonObject
         $sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
         $sql.= ' l.date_start,';
         $sql.= ' l.date_end,';
+        $sql.= ' l.fk_unit,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
         $sql.= ' p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -2745,7 +2754,8 @@ class Commande extends CommonObject
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
-
+                $this->lines[$i]->fk_unit           = $obj->fk_unit;
+				
                 $i++;
             }
 
@@ -2813,6 +2823,7 @@ class OrderLine
     // Start and end date of the line
     var $date_start;
     var $date_end;
+    var $fk_unit;
 
     var $skip_update_total; // Skip update price total for special lines
 
@@ -2838,6 +2849,7 @@ class OrderLine
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_parent_line, cd.fk_product, cd.product_type, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
         $sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang, cd.special_code,';
+        $sql.= ' cd.fk_unit,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
         $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
@@ -2881,6 +2893,8 @@ class OrderLine
 
             $this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
+
+            $this->fk_unit          = $objp->fk_unit;
 
             $this->db->free($result);
         }
@@ -2961,7 +2975,8 @@ class OrderLine
         $sql.= ' (fk_commande, fk_parent_line, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
         $sql.= ' special_code, rang, marge_tx, marque_tx,';
-        $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
+        $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
+        $sql.= ' fk_unit)';
         $sql.= " VALUES (".$this->fk_commande.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
@@ -2994,6 +3009,7 @@ class OrderLine
         else { $sql.='null,'; }
         if ($this->date_end)   { $sql.= "'".$this->db->idate($this->date_end)."'"; }
         else { $sql.='null'; }
+        $sql.= ', '.$this->fk_unit;
         $sql.= ')';
 
         dol_syslog("OrderLine::insert sql=".$sql);
@@ -3079,6 +3095,7 @@ class OrderLine
         $sql.= " , product_type=".$this->product_type;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
+        $sql.= " , fk_unit=".$this->fk_unit;
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
@@ -3145,6 +3162,44 @@ class OrderLine
             return -2;
         }
     }
+    
+    /**
+     *	Returns the text label from units dictionnary
+     *
+     * 	@param		string  label type (long or short)
+     *	@return		int		<0 if ko, label if ok
+     */
+	function get_unit_label($type='long')
+	{
+		global $langs;
+		
+		$langs->load('products');
+		
+		$this->db->begin();
+		
+		$label_type = 'label';
+		
+		if ($type == 'short')
+		{
+			$label_type = 'short_label';
+		}
+		
+		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$resql = $this->db->query($sql);
+		if($resql && $resql->num_rows > 0)
+		{
+			$res = $this->db->fetch_array($resql);
+			$label = $res[$label_type];
+			$this->db->free($resql);
+			return $langs->trans($label);
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::get_unit_label Error ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 }
 
 ?>

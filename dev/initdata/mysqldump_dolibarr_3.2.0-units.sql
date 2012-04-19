@@ -2524,11 +2524,13 @@ CREATE TABLE `llx_commandedet` (
   `marque_tx` double(6,3) DEFAULT '0.000',
   `special_code` int(10) unsigned DEFAULT '0',
   `rang` int(11) DEFAULT '0',
+  `fk_unit` integer      DEFAULT 1,
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_commandedet_fk_commande` (`fk_commande`),
   KEY `idx_commandedet_fk_product` (`fk_product`),
-  CONSTRAINT `fk_commandedet_fk_commande` FOREIGN KEY (`fk_commande`) REFERENCES `llx_commande` (`rowid`)
+  CONSTRAINT `fk_commandedet_fk_commande` FOREIGN KEY (`fk_commande`) REFERENCES `llx_commande` (`rowid`),
+  CONSTRAINT `fk_commandedet_fk_unit` FOREIGN KEY (`fk_unit`) REFERENCES `llx_c_units` (`rowid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
