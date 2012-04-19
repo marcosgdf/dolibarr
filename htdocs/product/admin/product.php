@@ -93,6 +93,12 @@ else if ($action == 'set')
 	$res = dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $ecotaxe,'chaine',0,'',$conf->entity);
 }*/
 
+else if ($action == 'useUnits')
+{
+    $useUnits = GETPOST('activate_units', 'alpha');
+    $res = dolibarr_set_const($db, "PRODUIT_USE_UNITS", $useUnits, 'chaine', 0, '', $conf->entity);    
+}
+
 if($action)
 {
 	if (! $res > 0) $error++;
@@ -244,6 +250,21 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
+// Use units
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="useUnits">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("useUnits").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_units",$conf->global->PRODUIT_USE_UNITS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

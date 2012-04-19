@@ -102,10 +102,20 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=99;
-		$this->posxup=114;
-		$this->posxqty=133;
-		$this->posxunit=150;
+		if($conf->global->PRODUIT_USE_UNITS)
+		{
+			$this->posxtva=99;
+			$this->posxup=114;
+			$this->posxqty=133;
+			$this->posxunit=150;
+		}
+        
+        else
+		{
+			$this->posxtva=111;
+			$this->posxup=126;
+			$this->posxqty=145;
+		}
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 
@@ -287,13 +297,23 @@ class pdf_crabe extends ModelePDFFactures
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxunit-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
-
-                    // Unit
-					$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
-					$pdf->SetXY($this->posxunit, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxunit-1, 4, $unit, 0, 'L');
-				
+					if($conf->global->PRODUIT_USE_UNITS)
+					{
+                        $pdf->MultiCell($this->posxunit-$this->posxqty-1, 4, $qty, 0, 'R');
+					}
+                    
+                    else
+					{
+                        $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');
+					}
+					// Unit
+					if($conf->global->PRODUIT_USE_UNITS)
+					{
+                        $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+                        $pdf->SetXY($this->posxunit, $curY);
+                        $pdf->MultiCell($this->posxdiscount-$this->posxunit-1, 4, $unit, 0, 'L');
+					}
+                    
                 	// Discount
 					if ($object->lines[$i]->remise_percent)
 					{
@@ -978,11 +998,22 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxqty-1, $tab_top+1);
-		$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
-
-		$pdf->line($this->posxunit-1, $tab_top, $this->posxunit-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxunit-1, $tab_top+1);
-		$pdf->MultiCell($this->posxdiscount-$this->posxunit-1,2, $outputlangs->transnoentities("Unit"),'','C');
+		if($conf->global->PRODUIT_USE_UNITS)
+		{
+			$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		}
+        
+		else
+		{
+			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');  
+		}
+        
+		if($conf->global->PRODUIT_USE_UNITS)
+		{
+			$pdf->line($this->posxunit-1, $tab_top, $this->posxunit-1, $tab_top + $tab_height);
+			$pdf->SetXY($this->posxunit-1, $tab_top+1);
+			$pdf->MultiCell($this->posxdiscount-$this->posxunit-1,2, $outputlangs->transnoentities("Unit"),'','C');
+		}
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if ($this->atleastonediscount)

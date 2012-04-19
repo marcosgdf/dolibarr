@@ -65,7 +65,14 @@
 	<?php } ?>
 	</td>
 
-	<td align="left"><?php echo $form->select_units($line->fk_unit, "units") ?></td>
+	<?php
+	if($conf->global->PRODUIT_USE_UNITS)
+	{
+		print '<td align="left">';
+		print $form->select_units($line->fk_unit, "units");
+		print '</td>';
+	}
+	?>
 
 	<td align="right" nowrap>
 	<?php if (($line->info_bits & 2) != 2) { ?>

@@ -821,11 +821,13 @@ else
         print "</td></tr>";
         
 		// Units
-		print '<tr><td>'.$langs->trans('Unit').'</td>';
-		print '<td>';
-		print $form->select_units("units");
-		print '</td></tr>';
-	
+        if($conf->global->PRODUIT_USE_UNITS)
+        {
+			print '<tr><td>'.$langs->trans('Unit').'</td>';
+			print '<td>';
+			print $form->select_units("units");
+			print '</td></tr>';
+        }
         print '</table>';
 
         print '<br>';
@@ -1027,11 +1029,14 @@ else
             $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
             $doleditor->Create();
             print "</td></tr>";
-            //TODO afficher unités ici
-            print '<tr><td>'.$langs->trans('Unit').'</td>';
-			print '<td>';
-			print $form->select_units("units");
-			print '</td></tr>';
+            
+            if($conf->global->PRODUIT_USE_UNITS)
+            {
+                print '<tr><td>'.$langs->trans('Unit').'</td>';
+                print '<td>';
+                print $form->select_units("units");
+                print '</td></tr>';
+            }
             print '</table>';
 
             print '<br>';
@@ -1242,10 +1247,12 @@ else
             }
 
             // Unit
-			print '<tr><td>'.$langs->trans('Unit').'</td><td>';
-			print $object->get_unit_label();
-			print '</td></tr>';
-
+            if($conf->global->PRODUIT_USE_UNITS)
+            {
+                print '<tr><td>'.$langs->trans('Unit').'</td><td>';
+                print $object->get_unit_label();
+                print '</td></tr>';
+            }
             // Customs code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
 
@@ -1268,7 +1275,7 @@ else
 
             // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
-			//TODO affichier unités ici
+		
             print "</table>\n";
 
             dol_fiche_end();

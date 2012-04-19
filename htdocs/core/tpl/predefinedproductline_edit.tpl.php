@@ -75,9 +75,14 @@
 	<?php } else { ?> &nbsp; <?php } ?>
 	</td>
 	
-	<td align="left" nowrap="nowrap">
-	<?php echo $line->get_unit_label();?>
-	</td>
+	<?php
+    if($conf->global->PRODUIT_USE_UNITS)
+    {
+        print '<td align="left" nowrap="nowrap">';
+        print $form->select_units($line->fk_unit, "units");
+        print '</td>';
+    }
+    ?>
 
 	<td align="right" nowrap>
 	<?php if (($line->info_bits & 2) != 2) { ?>

@@ -199,7 +199,10 @@ if ($_GET["action"] == 'create')
 				print '<td width="44%">'.$langs->trans("Description").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-				print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
+				if($conf->global->PRODUIT_USE_UNITS)
+				{
+                    print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
+				}  
 				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
 				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 				print '<td width="12%" align="right">N.P.</td>';
@@ -264,7 +267,10 @@ if ($_GET["action"] == 'create')
 
 				print '<TD align="center">'.$objp->tva_tx.' %</TD>';
 				print '<TD align="center">'.$objp->qty.'</TD>';
-				print '<td align="left">'.$product_static->get_unit_label().'</td>';
+				if($conf->global->PRODUIT_USE_UNITS)
+				{
+					print '<td align="left">'.$product_static->get_unit_label().'</td>';
+				}
 				if ($objp->remise_percent > 0)
 				{
 					print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -406,7 +412,11 @@ else
 			print '<td align="right">'.$langs->trans("Price").'</td>';
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td>';
-			print '<td align="left">'.$langs->trans("Unit").'</td></tr>';
+			if($conf->global->PRODUIT_USE_UNITS)
+			{
+				print '<td align="left">'.$langs->trans("Unit").'</td>';
+			}
+			print '</tr>';
 			$num = count($fac->lines);
 			$i = 0;
 			$var=True;
@@ -464,7 +474,11 @@ else
 				print "<td align=\"right\">".price($fac->lines[$i]->price)."</td>";
 				print '<td align="center">'.$fac->lines[$i]->remise_percent.' %</td>';
 				print "<td align=\"center\">".$fac->lines[$i]->qty."</td>";
-				print "<td align=\"left\">".$fac->lines[$i]->get_unit_label()."</td></tr>\n";
+				if($conf->global->PRODUIT_USE_UNITS)
+				{
+					print "<td align=\"left\">".$fac->lines[$i]->get_unit_label()."</td>";
+				}
+				print "</tr>\n";
 				$i++;
 			}
 			print '</table>';

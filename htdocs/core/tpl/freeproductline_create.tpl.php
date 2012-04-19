@@ -31,7 +31,14 @@
 	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
 	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
-	<td align="left"><?php echo $langs->trans('Unit') ;?></td>
+	<?php
+    if($conf->global->PRODUIT_USE_UNITS)
+    {
+	    print '<td align="left">';
+	    print $langs->trans('Unit');
+	    print '</td>';
+    }
+	?>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<td colspan="4">&nbsp;</td>
 </tr>
@@ -70,7 +77,14 @@
 	</td>
 	<td align="right"><input type="text" size="5" name="np_price" value="<?php echo (isset($_POST["np_price"])?$_POST["np_price"]:''); ?>"></td>
 	<td align="right"><input type="text" size="2" name="qty" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
-	<td align="right"><?php echo $form->select_units((isset($_POST["units"])?$_POST["units"]:1), "units") ?></td>
+	<?php
+	if($conf->global->PRODUIT_USE_UNITS)
+	{
+	    print '<td align="left">';
+	    print $form->select_units($line->fk_unit, "units");
+ 	    print '</td>';
+	}
+	?>
 	<td align="right" nowrap><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
 	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
 </tr>

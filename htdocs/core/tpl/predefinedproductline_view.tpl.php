@@ -47,10 +47,15 @@
 		else echo '&nbsp;';	?>
 	</td>
 	
-	<td align="left" nowrap="nowrap">
-	<?php echo $line->get_unit_label();?>
-	</td>
-
+	<?php
+	if($conf->global->PRODUIT_USE_UNITS)
+	{
+		print '<td align="left" nowrap="nowrap">';
+		print $line->get_unit_label();
+		print '</td>';
+	}
+	?>
+    
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
 	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
 	<?php } else { ?>
