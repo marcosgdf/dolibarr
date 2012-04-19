@@ -27,7 +27,7 @@
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-
+require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php");
 
 /**
  *  \class      Commande
@@ -2778,9 +2778,8 @@ class Commande extends CommonObject
  *  \class      OrderLine
  *  \brief      Classe de gestion des lignes de commande
  */
-class OrderLine
+class OrderLine extends CommonObjectLine
 {
-    var $db;
     var $error;
 
     var $oldline;
@@ -3163,43 +3162,7 @@ class OrderLine
         }
     }
     
-    /**
-     *	Returns the text label from units dictionnary
-     *
-     * 	@param		string  label type (long or short)
-     *	@return		int		<0 if ko, label if ok
-     */
-	function get_unit_label($type='long')
-	{
-		global $langs;
-		
-		$langs->load('products');
-		
-		$this->db->begin();
-		
-		$label_type = 'label';
-		
-		if ($type == 'short')
-		{
-			$label_type = 'short_label';
-		}
-		
-		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
-		$resql = $this->db->query($sql);
-		if($resql && $resql->num_rows > 0)
-		{
-			$res = $this->db->fetch_array($resql);
-			$label = $res[$label_type];
-			$this->db->free($resql);
-			return $langs->trans($label);
-		}
-		else
-		{
-			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::get_unit_label Error ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+    
 }
 
 ?>
