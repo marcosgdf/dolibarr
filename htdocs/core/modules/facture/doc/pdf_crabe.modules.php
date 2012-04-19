@@ -102,9 +102,10 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=111;
-		$this->posxup=126;
-		$this->posxqty=145;
+		$this->posxtva=99;
+		$this->posxup=114;
+		$this->posxqty=133;
+		$this->posxunit=150;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 
@@ -286,9 +287,14 @@ class pdf_crabe extends ModelePDFFactures
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
+					$pdf->MultiCell($this->posxunit-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
 
-					// Discount
+                    // Unit
+					$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+					$pdf->SetXY($this->posxunit, $curY);
+					$pdf->MultiCell($this->posxdiscount-$this->posxunit-1, 4, $unit, 0, 'L');
+				
+                	// Discount
 					if ($object->lines[$i]->remise_percent)
 					{
                         $pdf->SetXY($this->posxdiscount-2, $curY);
@@ -972,7 +978,11 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxqty-1, $tab_top+1);
-		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+
+		$pdf->line($this->posxunit-1, $tab_top, $this->posxunit-1, $tab_top + $tab_height);
+		$pdf->SetXY($this->posxunit-1, $tab_top+1);
+		$pdf->MultiCell($this->posxdiscount-$this->posxunit-1,2, $outputlangs->transnoentities("Unit"),'','C');
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if ($this->atleastonediscount)

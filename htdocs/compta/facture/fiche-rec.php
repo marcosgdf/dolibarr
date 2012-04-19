@@ -178,6 +178,7 @@ if ($_GET["action"] == 'create')
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' l.product_type,';
+        $sql.= ' l.fk_unit,';
 		$sql.= ' p.ref, p.fk_product_type, p.label as product_label,';
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
@@ -195,9 +196,10 @@ if ($_GET["action"] == 'create')
 			if ($num)
 			{
 				print "<tr class=\"liste_titre\">";
-				print '<td width="54%">'.$langs->trans("Description").'</td>';
+				print '<td width="44%">'.$langs->trans("Description").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
+				print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
 				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
 				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 				print '<td width="12%" align="right">N.P.</td>';
@@ -219,7 +221,7 @@ if ($_GET["action"] == 'create')
 
 				// Show product and description
 				$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
-
+				$product_static->fk_unit=$objp->fk_unit;
 				if ($objp->fk_product)
 				{
 					print '<td>';
@@ -231,17 +233,17 @@ if ($_GET["action"] == 'create')
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
 					$product_static->libelle=$objp->product_label;
+                    
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$objp->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text,$description,3,'','',$i);
-
 					// Show range
 					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-
+           
 					print '</td>';
 				}
 				else
@@ -262,6 +264,7 @@ if ($_GET["action"] == 'create')
 
 				print '<TD align="center">'.$objp->tva_tx.' %</TD>';
 				print '<TD align="center">'.$objp->qty.'</TD>';
+				print '<td align="left">'.$product_static->get_unit_label().'</td>';
 				if ($objp->remise_percent > 0)
 				{
 					print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -402,8 +405,8 @@ else
 			print '<td>'.$langs->trans("Description").'</td>';
 			print '<td align="right">'.$langs->trans("Price").'</td>';
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
-			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
-
+			print '<td align="center">'.$langs->trans("Qty").'</td>';
+			print '<td align="left">'.$langs->trans("Unit").'</td></tr>';
 			$num = count($fac->lines);
 			$i = 0;
 			$var=True;
@@ -460,7 +463,8 @@ else
 				}
 				print "<td align=\"right\">".price($fac->lines[$i]->price)."</td>";
 				print '<td align="center">'.$fac->lines[$i]->remise_percent.' %</td>';
-				print "<td align=\"center\">".$fac->lines[$i]->qty."</td></tr>\n";
+				print "<td align=\"center\">".$fac->lines[$i]->qty."</td>";
+				print "<td align=\"left\">".$fac->lines[$i]->get_unit_label()."</td></tr>\n";
 				$i++;
 			}
 			print '</table>';

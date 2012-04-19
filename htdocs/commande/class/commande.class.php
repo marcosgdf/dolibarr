@@ -2822,7 +2822,6 @@ class OrderLine extends CommonObjectLine
     // Start and end date of the line
     var $date_start;
     var $date_end;
-    var $fk_unit;
 
     var $skip_update_total; // Skip update price total for special lines
 

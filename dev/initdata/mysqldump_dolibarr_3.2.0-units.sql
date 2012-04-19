@@ -3856,12 +3856,14 @@ CREATE TABLE `llx_facturedet` (
   `fk_export_compta` int(11) NOT NULL DEFAULT '0',
   `special_code` int(10) unsigned DEFAULT '0',
   `rang` int(11) DEFAULT '0',
+  `fk_unit` integer DEFAULT '1',
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_fk_remise_except` (`fk_remise_except`,`fk_facture`),
   KEY `idx_facturedet_fk_facture` (`fk_facture`),
   KEY `idx_facturedet_fk_product` (`fk_product`),
-  CONSTRAINT `fk_facturedet_fk_facture` FOREIGN KEY (`fk_facture`) REFERENCES `llx_facture` (`rowid`)
+  CONSTRAINT `fk_facturedet_fk_facture` FOREIGN KEY (`fk_facture`) REFERENCES `llx_facture` (`rowid`),
+  CONSTRAINT `fk_facturedet_fk_unit` FOREIGN KEY (`fk_unit`) REFERENCES `llx_c_units` (`rowid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3904,7 +3906,9 @@ CREATE TABLE `llx_facturedet_rec` (
   `total_ttc` double(24,8) DEFAULT NULL,
   `special_code` int(10) unsigned DEFAULT '0',
   `rang` int(11) DEFAULT '0',
-  PRIMARY KEY (`rowid`)
+  `fk_unit` integer DEFAULT '1',
+  PRIMARY KEY (`rowid`),
+  CONSTRAINT `fk_facturedet_rec_fk_unit` FOREIGN KEY (`fk_unit`) REFERENCES `llx_c_units` (`rowid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

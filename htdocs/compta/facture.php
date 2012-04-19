@@ -660,7 +660,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
                     $product->fetch($_POST['idprod'.$i]);
                     $startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
                     $endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-                    $result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+                    $result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, $product->fk_unit);
                 }
             }
         }
@@ -842,7 +842,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
                                     $lines[$i]->special_code,
                                     $object->origin,
                                     $lines[$i]->rowid,
-                                    $fk_parent_line
+                                    $fk_parent_line,
+                                    $lines[$i]->fk-unit
                                 );
 
                                 if ($result > 0)
@@ -893,7 +894,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
                         $product->fetch($_POST['idprod'.$i]);
                         $startday=dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
                         $endday=dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-                        $result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+                        $result=$object->addline($id,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, $product->fk_unit);
                     }
                 }
             }
@@ -968,6 +969,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         // Ecrase $desc par celui du produit
         // Ecrase $txtva par celui du produit
         // Ecrase $base_price_type par celui du produit
+        // Replaces $fk_unit with the product's
         if ($_POST['idprod'])
         {
             $prod = new Product($db);
@@ -1038,6 +1040,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
                 $desc.= (dol_textishtml($desc)?"<br>\n":"\n").$tmptxt;
             }
             $type = $prod->type;
+            $fk_unit = $prod->fk_unit;
         }
         else
         {
@@ -1046,6 +1049,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             $tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
             $desc=$_POST['dp_desc'];
             $type=$_POST["type"];
+            $fk_unit=$_POST['units'];
         }
 
         $localtax1_tx=get_localtax($tva_tx,1,$object->client);
@@ -1086,7 +1090,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
                     0,
                     '',
                     0,
-                    GETPOST('fk_parent_line')
+                    GETPOST('fk_parent_line'),
+                    $fk_unit
                 );
             }
         }
@@ -1117,6 +1122,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         unset($_POST['np_desc']);
         unset($_POST['np_price']);
         unset($_POST['np_tva_tx']);
+        unset($_POST['units']);
     }
     else
     {
@@ -1193,7 +1199,8 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
             'HT',
             $info_bits,
             $type,
-            GETPOST('fk_parent_line')
+            GETPOST('fk_parent_line'),
+            $_POST['units']
         );
 
         // Define output language

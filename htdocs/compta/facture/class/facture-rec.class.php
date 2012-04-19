@@ -159,7 +159,8 @@ class FactureRec extends Facture
 	                    0,
     					$facsrc->lines[$i]->product_type,
     					$facsrc->lines[$i]->rang,
-    					$facsrc->lines[$i]->special_code
+    					$facsrc->lines[$i]->special_code,
+    					$facsrc->lines[$i]->fk_unit
 					);
 
 					if ($result_insert < 0)
@@ -316,6 +317,7 @@ class FactureRec extends Facture
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql.= ' l.rang, l.special_code,';
+        $sql.= ' l.fk_unit,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -362,6 +364,8 @@ class FactureRec extends Facture
 				// Ne plus utiliser
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
+
+				$line->fk_unit          = $objp->fk_unit;
 
 				$this->lines[$i] = $line;
 
@@ -430,9 +434,9 @@ class FactureRec extends Facture
      *	@param		int			$special_code		Special code
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $fk_unit=1)
 	{
-		dol_syslog("FactureRec::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
+		dol_syslog("FactureRec::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
 		// Check parameters
@@ -491,6 +495,7 @@ class FactureRec extends Facture
 			$sql.= ", total_ttc";
 			$sql.= ", rang";
 			$sql.= ", special_code";
+			$sql.= ", fk_unit";
 			$sql.= ") VALUES (";
 			$sql.= "'".$facid."'";
 			$sql.= ", '".$this->db->escape($desc)."'";
@@ -506,7 +511,8 @@ class FactureRec extends Facture
 			$sql.= ", '".price2num($total_tva)."'";
 			$sql.= ", '".price2num($total_ttc)."'";
 			$sql.= ", ".$rang;
-			$sql.= ", ".$special_code.")";
+			$sql.= ", ".$special_code;
+			$sql.= ", ".$fk_unit.")";
 
 			dol_syslog(get_class($this)."::addline sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))

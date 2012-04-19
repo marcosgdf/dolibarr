@@ -2474,8 +2474,6 @@ class PropaleLigne extends CommonObjectLine
     var $total_localtax1;
     var $total_localtax2;
     
-    var $fk_unit;
-
     var $skip_update_total; // Skip update price total for special lines
 
     /**

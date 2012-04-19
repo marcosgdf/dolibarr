@@ -41,5 +41,6 @@ create table llx_facturedet_rec
   total_localtax2 double(24,8) DEFAULT 0,		-- total LocalTax2 for total quantity of line
   total_ttc       double(24,8),	             	-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
   special_code    integer UNSIGNED DEFAULT 0,		-- code pour les lignes speciales
-  rang            integer    DEFAULT 0				-- ordre d'affichage
+  rang            integer    DEFAULT 0,			-- ordre d'affichage
+  fk_unit         integer    DEFAULT 1
 )ENGINE=innodb;

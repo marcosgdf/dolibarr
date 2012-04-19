@@ -31,6 +31,8 @@ abstract class CommonObjectLine
 {
     //! Database handler
     protected $db;
+    //! Unit id in database
+    public $fk_unit;
     
     /**
      *	Returns the text label from units dictionnary

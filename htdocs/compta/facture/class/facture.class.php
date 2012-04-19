@@ -32,7 +32,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
-
+require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php");
 
 /**
  *	Class to manage invoices
@@ -356,7 +356,8 @@ class Facture extends CommonObject
                             $this->lines[$i]->special_code,
                             '',
                             0,
-                            $fk_parent_line
+                            $fk_parent_line,
+                            $this->lines[$i]->fk_unit
                         );
                         if ($result < 0)
                         {
@@ -654,6 +655,7 @@ class Facture extends CommonObject
             $line->rang				= $object->lines[$i]->rang;
             $line->special_code		= $object->lines[$i]->special_code;
             $line->fk_parent_line	= $object->lines[$i]->fk_parent_line;
+            $line->fk_unit			= $object->lines[$i]->fk_unit;
 
             $this->lines[$i] = $line;
         }
@@ -876,6 +878,7 @@ class Facture extends CommonObject
         $sql.= ' l.rang, l.special_code,';
         $sql.= ' l.date_start as date_start, l.date_end as date_end,';
         $sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
+        $sql.= ' l.fk_unit,';
         $sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -924,6 +927,7 @@ class Facture extends CommonObject
                 $line->rang				= $objp->rang;
                 $line->special_code		= $objp->special_code;
                 $line->fk_parent_line	= $objp->fk_parent_line;
+                $line->fk_unit	        = $objp->fk_unit;
 
                 // Ne plus utiliser
                 //$line->price            = $objp->price;
@@ -1822,9 +1826,9 @@ class Facture extends CommonObject
      *      @param		int			$fk_parent_line		Id of parent line
      *    	@return    	int             				<0 if KO, Id of line if OK
      */
-    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0)
+    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_unit=1)
     {
-        dol_syslog(get_class($this)."::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
+        dol_syslog(get_class($this)."::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         // Clean parameters
@@ -1927,6 +1931,7 @@ class Facture extends CommonObject
             $this->line->fk_parent_line=$fk_parent_line;
             $this->line->origin=$origin;
             $this->line->origin_id=$origin_id;
+            $this->line->fk_unit=$fk_unit;
 
             // TODO Ne plus utiliser
             //$this->line->price=($this->type==2?-1:1)*abs($price);
@@ -1983,11 +1988,11 @@ class Facture extends CommonObject
      * 		@param		int			$skip_update_total	???
      *      @return    	int             				< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $fk_unit=1, $skip_update_total=0)
     {
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
-        dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type, $fk_parent_line", LOG_DEBUG);
+        dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type, $fk_parent_line, $fk_unit", LOG_DEBUG);
 
         if ($this->brouillon)
         {
@@ -2063,6 +2068,7 @@ class Facture extends CommonObject
             $this->line->info_bits			= $info_bits;
             $this->line->product_type		= $type;
             $this->line->fk_parent_line		= $fk_parent_line;
+            $this->line->fk_unit				= $fk_unit;
             $this->line->skip_update_total	= $skip_update_total;
 
             // A ne plus utiliser
@@ -3097,6 +3103,7 @@ class Facture extends CommonObject
                 $line->localtax1_tx=0;
                 $line->localtax2_tx=0;
     		    $line->remise_percent=0;
+    		    $line->fk_unit=1;
                 if ($xnbp == 1)        // Qty is negative (product line)
     			{
                     $prodid = rand(1, $num_prods);
@@ -3155,7 +3162,7 @@ class Facture extends CommonObject
             $line->total_tva=0;
             $prodid = rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
-
+            $line->fk_unit=1;
             $this->lines[$xnbp]=$line;
             $xnbp++;
         }
@@ -3216,6 +3223,7 @@ class Facture extends CommonObject
         $sql.= ' l.date_start,';
         $sql.= ' l.date_end,';
         $sql.= ' l.product_type,';
+        $sql.= ' l.fk_unit,';
         $sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
         $sql.= ' p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
@@ -3254,6 +3262,7 @@ class Facture extends CommonObject
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
+                $this->lines[$i]->fk_unit			= $obj->fk_unit;
 
                 $i++;
             }
@@ -3278,9 +3287,8 @@ class Facture extends CommonObject
  *	\brief      	Classe permettant la gestion des lignes de factures
  *					Gere des lignes de la table llx_facturedet
  */
-class FactureLigne
+class FactureLigne extends CommonObjectLine
 {
-    var $db;
     var $error;
 
     var $oldline;
@@ -3369,6 +3377,7 @@ class FactureLigne
         $sql.= ' fd.date_start as date_start, fd.date_end as date_end,';
         $sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
         $sql.= ' fd.fk_code_ventilation, fd.fk_export_compta,';
+        $sql.= ' fd.fk_unit,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
@@ -3413,6 +3422,7 @@ class FactureLigne
             $this->libelle				= $objp->product_libelle;  // deprecated
             $this->product_label		= $objp->product_libelle;
             $this->product_desc			= $objp->product_desc;
+            $this->fk_unit				= $objp->fk_unit;
 
             $this->db->free($result);
         }
@@ -3463,7 +3473,8 @@ class FactureLigne
         $sql.= ' fk_product, product_type, remise_percent, subprice, fk_remise_except,';
         $sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
         $sql.= ' rang, special_code,';
-        $sql.= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2)';
+        $sql.= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
+        $sql.= ' fk_unit)';
         $sql.= " VALUES (".$this->fk_facture.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
@@ -3493,7 +3504,8 @@ class FactureLigne
 		$sql.= " ".price2num($this->total_tva).",";
 		$sql.= " ".price2num($this->total_ttc).",";
         $sql.= " ".price2num($this->total_localtax1).",";
-        $sql.= " ".price2num($this->total_localtax2);
+        $sql.= " ".price2num($this->total_localtax2).",";
+        $sql.= " ".$this->fk_unit;
         $sql.= ')';
 
         dol_syslog(get_class($this)."::insert sql=".$sql);
@@ -3633,6 +3645,7 @@ class FactureLigne
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
+        $sql.= ", fk_unit=".$this->fk_unit;
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
