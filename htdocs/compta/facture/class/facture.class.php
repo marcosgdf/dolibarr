@@ -404,7 +404,8 @@ class Facture extends CommonObject
     					'','',0,0,'','HT',0,
                         $_facrec->lines[$i]->product_type,
                         $_facrec->lines[$i]->rang,
-                        $_facrec->lines[$i]->special_code
+                        $_facrec->lines[$i]->special_code,
+                        $_facrec->lines[$i]->fk_unit
                     );
 
                     if ( $result_insert < 0)
