@@ -844,7 +844,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
                                     $object->origin,
                                     $lines[$i]->rowid,
                                     $fk_parent_line,
-                                    $lines[$i]->fk-unit
+                                    $lines[$i]->fk_unit
                                 );
 
                                 if ($result > 0)
