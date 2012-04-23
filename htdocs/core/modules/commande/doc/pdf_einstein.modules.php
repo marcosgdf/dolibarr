@@ -69,7 +69,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$langs->load("main");
 		$langs->load("bills");
-
+        $langs->load("products");
 		$this->db = $db;
 		$this->name = "einstein";
 		$this->description = $langs->trans('PDFEinsteinDescription');
@@ -313,7 +313,7 @@ class pdf_einstein extends ModelePDFCommandes
 					{
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxunit, $curY);
-						$pdf->MultiCell($this->posxdiscount-$this->posxunit-1, 4, $unit, 0, 'L');
+						$pdf->MultiCell($this->posxdiscount-$this->posxunit-1, 4 , $outputlangs->trans($unit), 0, 'L');
 					}
 					// Discount on line
 					$pdf->SetXY($this->posxdiscount, $curY);

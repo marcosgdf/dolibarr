@@ -1191,7 +1191,7 @@ function pdf_getlineunit($object,$i,$outputlangs,$hidedetails=0,$hookmanager=fal
 		}
 		else
 		{
-			if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->get_unit_label('short');
+			if (empty($hidedetails) || $hidedetails > 1) return $outputlangs->convToOutputCharset($object->lines[$i]->get_unit_label('short'),'UTF-8');// dol_print_unit($object->lines[$i]->get_unit_label('short'), $outputlangs);//
 		}
 	}
 }

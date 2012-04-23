@@ -1251,7 +1251,7 @@ else
             if($conf->global->PRODUIT_USE_UNITS)
             {
                 print '<tr><td>'.$langs->trans('Unit').'</td><td>';
-                print $object->get_unit_label();
+                print $langs->trans($object->get_unit_label());
                 print '</td></tr>';
             }
             // Customs code

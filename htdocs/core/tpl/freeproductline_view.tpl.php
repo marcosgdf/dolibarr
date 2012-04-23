@@ -83,7 +83,8 @@
     if($conf->global->PRODUIT_USE_UNITS)
     {
         print '<td align="left" nowrap="nowrap">';
-        print $line->get_unit_label();
+        $label = $line->get_unit_label();
+		print $langs->trans($label);
         print '</td>';
     }
     ?>

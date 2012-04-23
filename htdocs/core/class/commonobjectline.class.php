@@ -63,7 +63,7 @@ abstract class CommonObjectLine
 			$res = $this->db->fetch_array($resql);
 			$label = $res[$label_type];
 			$this->db->free($resql);
-			return $langs->trans($label);
+			return $label;
 		}
 		else
 		{
