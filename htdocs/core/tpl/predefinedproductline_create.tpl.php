@@ -78,9 +78,12 @@ jQuery(document).ready(function() {
 	?>
 	</td>
 	<td align="right"><input type="text" size="2" name="qty" value="1"></td>
-	
-	<td align="right">&nbsp;</td>
-
+	<?php
+	if($conf->global->PRODUIT_USE_UNITS)
+	{
+        print '<td align="right">&nbsp;</td>';
+	}
+    ?>
 	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>">%</td>
 
 	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline"></td>
