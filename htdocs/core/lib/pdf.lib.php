@@ -1179,6 +1179,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0,$hookm
  */
 function pdf_getlineunit($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
+    global $langs;
 	if ($object->lines[$i]->special_code != 3)
 	{
 		if (is_object($hookmanager) && (( $object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
@@ -1191,7 +1192,7 @@ function pdf_getlineunit($object,$i,$outputlangs,$hidedetails=0,$hookmanager=fal
 		}
 		else
 		{
-			if (empty($hidedetails) || $hidedetails > 1) return $outputlangs->convToOutputCharset($object->lines[$i]->get_unit_label('short'),'UTF-8');// dol_print_unit($object->lines[$i]->get_unit_label('short'), $outputlangs);//
+			if (empty($hidedetails) || $hidedetails > 1) return $langs->transnoentitiesnoconv($object->lines[$i]->get_unit_label('short'));// dol_print_unit($object->lines[$i]->get_unit_label('short'), $outputlangs);//
 		}
 	}
 }
