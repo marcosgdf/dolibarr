@@ -1303,4 +1303,4 @@ TestGeoIPResult=Test of a conversion IP -> country
 ProjectsNumberingModules=Projects numbering module
 ProjectsSetup=Project module setup
 ProjectsModelModule=Project's report document model
-useUnits=Activate the products' units
+useUnits=Activate the units
