@@ -88,7 +88,7 @@ class pdf_azur extends ModelePDFPropales
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		if($conf->global->PRODUIT_USE_UNITS)
+		if($conf->global->PRODUCT_USE_UNITS)
 		{
 			$this->posxtva=99;
 			$this->posxup=114;
@@ -284,7 +284,7 @@ class pdf_azur extends ModelePDFPropales
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxqty, $curY);
-					if($conf->global->PRODUIT_USE_UNITS)
+					if($conf->global->PRODUCT_USE_UNITS)
 					{
 						$pdf->MultiCell($this->posxunit-$this->posxqty-1, 4, $qty, 0, 'R');
 					}
@@ -293,7 +293,8 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');
 					}
 					// Unit
-                                        if($conf->global->PRODUIT_USE_UNITS)
+                                        if($conf->global->PRODUCT_USE_UNITS)
+
 					{
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxunit, $curY);
@@ -887,7 +888,7 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxqty-1, $tab_top+1);
-		if($conf->global->PRODUIT_USE_UNITS)
+		if($conf->global->PRODUCT_USE_UNITS)
 		{
 			$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 		}
@@ -897,7 +898,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');  
 		}
         
-		if($conf->global->PRODUIT_USE_UNITS)
+		if($conf->global->PRODUCT_USE_UNITS)
 		{
 			$pdf->line($this->posxunit-1, $tab_top, $this->posxunit-1, $tab_top + $tab_height);
 			$pdf->SetXY($this->posxunit-1, $tab_top+1);

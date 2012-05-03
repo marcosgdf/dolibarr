@@ -67,7 +67,7 @@
 	</td>
 
 	<?php
-	if($conf->global->PRODUIT_USE_UNITS)
+	if($conf->global->PRODUCT_USE_UNITS)
 	{
 		print '<td align="left">';
 		print $form->select_units($line->fk_unit, "units");

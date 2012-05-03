@@ -2434,7 +2434,7 @@ abstract class CommonObject
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-		if($conf->global->PRODUIT_USE_UNITS)
+		if($conf->global->PRODUCT_USE_UNITS)
 		{
 			print '<td align="left" width="50">'.$langs->trans('Unit').'</td>';
 		}

@@ -80,7 +80,7 @@
 	</td>
 
 	<?php
-    if($conf->global->PRODUIT_USE_UNITS)
+    if($conf->global->PRODUCT_USE_UNITS)
     {
         print '<td align="left" nowrap="nowrap">';
         $label = $line->get_unit_label();

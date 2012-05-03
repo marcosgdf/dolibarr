@@ -97,7 +97,7 @@ else if ($action == 'set')
 else if ($action == 'useUnits')
 {
     $useUnits = GETPOST('activate_units', 'alpha');
-    $res = dolibarr_set_const($db, "PRODUIT_USE_UNITS", $useUnits, 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $useUnits, 'chaine', 0, '', $conf->entity);
 }
 
 if($action)
@@ -265,7 +265,7 @@ print '<input type="hidden" name="action" value="useUnits">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseUnits").'</td>';
 print '<td width="60" align="right">';
-print $form->selectyesno("activate_units",$conf->global->PRODUIT_USE_UNITS,1);
+print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

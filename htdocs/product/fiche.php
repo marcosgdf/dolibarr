@@ -823,7 +823,7 @@ else
         print "</td></tr>";
 
         // Units
-        if($conf->global->PRODUIT_USE_UNITS)
+        if($conf->global->PRODUCT_USE_UNITS)
         {
 			print '<tr><td>'.$langs->trans('Unit').'</td>';
 			print '<td>';
@@ -1033,7 +1033,7 @@ else
             $doleditor->Create();
             print "</td></tr>";
 
-            if($conf->global->PRODUIT_USE_UNITS)
+            if($conf->global->PRODUCT_USE_UNITS)
             {
                 print '<tr><td>'.$langs->trans('Unit').'</td>';
                 print '<td>';
@@ -1250,7 +1250,7 @@ else
             }
 
             // Unit
-            if($conf->global->PRODUIT_USE_UNITS)
+            if($conf->global->PRODUCT_USE_UNITS)
             {
                 print '<tr><td>'.$langs->trans('Unit').'</td><td>';
                 print $langs->trans($object->get_unit_label());

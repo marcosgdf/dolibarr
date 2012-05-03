@@ -200,7 +200,7 @@ if ($_GET["action"] == 'create')
 				print '<td width="44%">'.$langs->trans("Description").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-				if($conf->global->PRODUIT_USE_UNITS)
+				if($conf->global->PRODUCT_USE_UNITS)
 				{
 					print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
 				}
@@ -267,7 +267,7 @@ if ($_GET["action"] == 'create')
 
 				print '<TD align="center">'.$objp->tva_tx.' %</TD>';
 				print '<TD align="center">'.$objp->qty.'</TD>';
-				if($conf->global->PRODUIT_USE_UNITS)
+				if($conf->global->PRODUCT_USE_UNITS)
 				{
 					print '<td align="left">'.$product_static->get_unit_label().'</td>';
 				}
@@ -412,7 +412,7 @@ else
 			print '<td align="right">'.$langs->trans("Price").'</td>';
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td>';
-			if($conf->global->PRODUIT_USE_UNITS)
+			if($conf->global->PRODUCT_USE_UNITS)
 			{
 				print '<td align="left">'.$langs->trans("Unit").'</td>';
 			}
@@ -474,7 +474,7 @@ else
 				print "<td align=\"right\">".price($fac->lines[$i]->price)."</td>";
 				print '<td align="center">'.$fac->lines[$i]->remise_percent.' %</td>';
 				print "<td align=\"center\">".$fac->lines[$i]->qty."</td>";
-				if($conf->global->PRODUIT_USE_UNITS)
+				if($conf->global->PRODUCT_USE_UNITS)
 				{
 					print "<td align=\"left\">".$fac->lines[$i]->get_unit_label()."</td>";
 				}

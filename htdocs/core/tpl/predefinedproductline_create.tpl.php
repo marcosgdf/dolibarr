@@ -79,7 +79,7 @@ jQuery(document).ready(function() {
 	</td>
 	<td align="right"><input type="text" size="2" name="qty" value="1"></td>
 	<?php
-	if($conf->global->PRODUIT_USE_UNITS)
+	if($conf->global->PRODUCT_USE_UNITS)
 	{
         print '<td align="right">&nbsp;</td>';
 	}
