@@ -5,6 +5,8 @@
  * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1192,7 +1194,7 @@ function pdf_getlineunit($object,$i,$outputlangs,$hidedetails=0,$hookmanager=fal
 		}
 		else
 		{
-			if (empty($hidedetails) || $hidedetails > 1) return $langs->transnoentitiesnoconv($object->lines[$i]->get_unit_label('short'));// dol_print_unit($object->lines[$i]->get_unit_label('short'), $outputlangs);//
+			if (empty($hidedetails) || $hidedetails > 1) return $langs->transnoentitiesnoconv($object->lines[$i]->get_unit_label('short'));
 		}
 	}
 }

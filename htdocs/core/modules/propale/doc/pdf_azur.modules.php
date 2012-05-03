@@ -295,7 +295,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');
 					}
 					// Unit
-                    if($conf->global->PRODUIT_USE_UNITS)
+                                        if($conf->global->PRODUIT_USE_UNITS)
 					{
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxunit, $curY);
