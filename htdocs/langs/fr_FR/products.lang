@@ -170,6 +170,7 @@ CustomCode=Code douane
 CountryOrigin=Pays d'origine
 HiddenIntoCombo=Caché dans les listes
 DictionnaryUnits=Unités
+ShortLabel=Libellé court
 Unit=Unité
 aucune=aucune
 piece=pièce

@@ -170,6 +170,7 @@ CustomCode=Customs code
 CountryOrigin=Origin country
 HiddenIntoCombo=Hidden into select lists
 DictionnaryUnits=Units
+ShortLabel=Short label
 Unit=Unit
 aucune=none
 piece=unit
