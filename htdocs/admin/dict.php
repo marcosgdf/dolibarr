@@ -890,7 +890,15 @@ if ($id)
                                 $showfield=0;
                             }
                             else if ($fieldlist[$field]=='unicode') {
-                            	$valuetoshow = getCurrencySymbol($obj->code);
+                               $valuetoshow = getCurrencySymbol($obj->code);
+                            }
+                            else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
+                                $langs->load("products");
+                                $valuetoshow=$langs->trans($obj->$fieldlist[$field]);
+                            }
+                            else if ($fieldlist[$field]=='short_label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
+                                $langs->load("products");
+                                $valuetoshow=$langs->trans($obj->$fieldlist[$field]);
                             }
                             if ($showfield) print '<td>'.$valuetoshow.'</td>';
                         }
