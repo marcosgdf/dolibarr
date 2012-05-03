@@ -263,7 +263,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="useUnits">';
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("useUnits").'</td>';
+print '<td>'.$langs->trans("UseUnits").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_units",$conf->global->PRODUIT_USE_UNITS,1);
 print '</td><td align="right">';

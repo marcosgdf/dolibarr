@@ -1127,6 +1127,7 @@ UseSearchToSelectProduct=Use a search form to choose a product (instead of using
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Default barcode type to use for products
 SetDefaultBarcodeTypeThirdParties=Default barcode type to use for third parties
+UseUnits=Support units
 ##### Syslog #####
 SyslogSetup=Logs module setup
 SyslogOutput=Logs outputs
@@ -1303,4 +1304,3 @@ TestGeoIPResult=Test of a conversion IP -> country
 ProjectsNumberingModules=Projects numbering module
 ProjectsSetup=Project module setup
 ProjectsModelModule=Project's report document model
-useUnits=Activate the units
