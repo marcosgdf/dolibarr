@@ -464,7 +464,13 @@ if (empty($reshook))
             $prod->id,
             $_POST["remise_percent"],
             $price_base_type,
-            $pu_ttc
+            $pu_ttc,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            $prod->fk_unit
         );
         if ($result > 0)
         {
@@ -548,7 +554,14 @@ if (empty($reshook))
 			'',
 			'', //Todo: voir si fk_remise_except est encore valable car n'apparait plus dans les propales
             $price_base_type,
-            $pu_ttc
+            $pu_ttc,
+            '',
+            '',
+            0,
+            -1,
+            0,
+            0,
+            $prod->fk_unit
         );
 
         if ($result > 0)
@@ -633,7 +646,14 @@ if (empty($reshook))
    		    '',
   		    '',
             $price_base_type,
-            $pu_ttc
+            $pu_ttc,
+            0,
+   		    -1,
+   		    0,
+   		    '',
+  		    0,
+            0,
+            $prod->fk_unit
         );
 
         if ($result > 0)
