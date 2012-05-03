@@ -2582,7 +2582,7 @@ abstract class CommonObject
      */
     function printOriginLinesList($hookmanager=false)
     {
-        global $langs;
+        global $langs, $conf;
 
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans('Ref').'</td>';
@@ -2590,6 +2590,10 @@ abstract class CommonObject
         print '<td align="right">'.$langs->trans('VAT').'</td>';
         print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
         print '<td align="right">'.$langs->trans('Qty').'</td>';
+        if($conf->global->PRODUCT_USE_UNITS)
+        {
+            print '<td align="left">'.$langs->trans('Unit').'</td>';
+        }
         print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
         $num = count($this->lines);
@@ -2630,7 +2634,7 @@ abstract class CommonObject
      */
     function printOriginLine($line,$var)
     {
-        global $langs,$bc;
+        global $langs,$bc, $conf;
 
         //var_dump($line);
 
@@ -2700,6 +2704,7 @@ abstract class CommonObject
         $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
         $this->tpl['price'] = price($line->subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
+        if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->get_unit_label('long');
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 
         include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
