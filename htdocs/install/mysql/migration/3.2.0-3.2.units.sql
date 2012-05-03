@@ -22,6 +22,7 @@ create table llx_c_units(
 
 ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
 
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('NA','aucune','', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('P','piece','p', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('SET','set','se', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('S','second','s', 1);
