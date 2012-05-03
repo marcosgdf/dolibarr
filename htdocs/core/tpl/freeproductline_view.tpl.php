@@ -78,7 +78,7 @@
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;
 		else echo '&nbsp;';	?>
 	</td>
-	
+
 	<?php
     if($conf->global->PRODUIT_USE_UNITS)
     {

@@ -75,7 +75,7 @@
 		<input size="2" type="text" class="flat" name="qty"	value="<?php echo $line->qty; ?>" />
 	<?php } else { ?> &nbsp; <?php } ?>
 	</td>
-	
+
 	<?php
     if($conf->global->PRODUIT_USE_UNITS)
     {

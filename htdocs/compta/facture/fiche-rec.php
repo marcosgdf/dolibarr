@@ -179,7 +179,7 @@ if ($_GET["action"] == 'create')
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' l.product_type,';
-        $sql.= ' l.fk_unit,';
+		$sql.= ' l.fk_unit,';
 		$sql.= ' p.ref, p.fk_product_type, p.label as product_label,';
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
@@ -202,8 +202,8 @@ if ($_GET["action"] == 'create')
 				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 				if($conf->global->PRODUIT_USE_UNITS)
 				{
-                    print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
-				}  
+					print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
+				}
 				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
 				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 				print '<td width="12%" align="right">N.P.</td>';
@@ -226,6 +226,7 @@ if ($_GET["action"] == 'create')
 				// Show product and description
 				$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
 				$product_static->fk_unit=$objp->fk_unit;
+
 				if ($objp->fk_product)
 				{
 					print '<td>';
@@ -237,7 +238,6 @@ if ($_GET["action"] == 'create')
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
 					$product_static->libelle=$objp->product_label;
-                    
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$objp->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
@@ -247,7 +247,6 @@ if ($_GET["action"] == 'create')
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-           
 					print '</td>';
 				}
 				else

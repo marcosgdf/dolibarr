@@ -69,7 +69,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$langs->load("main");
 		$langs->load("bills");
-        $langs->load("products");
+		$langs->load("products");
 		$this->db = $db;
 		$this->name = "einstein";
 		$this->description = $langs->trans('PDFEinsteinDescription');
@@ -104,7 +104,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-	
+
 		if($conf->global->PRODUIT_USE_UNITS)
 		{
             $this->posxtva=99;
@@ -112,14 +112,13 @@ class pdf_einstein extends ModelePDFCommandes
             $this->posxqty=133;
             $this->posxunit=150;
 		}
-        
 		else
 		{
             $this->posxtva=111;
             $this->posxup=126;
             $this->posxqty=145;
 		}
-        
+
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 
@@ -303,7 +302,6 @@ class pdf_einstein extends ModelePDFCommandes
 					{
 						$pdf->MultiCell($this->posxunit-$this->posxqty-1, 4, $qty, 0, 'R');
 					}
-                    
 					else
 					{
 						$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');

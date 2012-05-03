@@ -1996,7 +1996,7 @@ class Form
 
         return $return;
     }
-    
+
     /**
      *      Prints units selector
      *
@@ -2006,8 +2006,8 @@ class Form
      */
     function select_units($selected = '', $htmlname = 'units')
     {
-		print $this->load_units($selected, $htmlname);
-	}
+        print $this->load_units($selected, $htmlname);
+    }
 
     /**
      *      Creates HTML units selector
@@ -2016,32 +2016,32 @@ class Form
      *      @param  string	$htmlname        Select name
      * 		@return	string                   HTML select
      */
-	function load_units($selected = '', $htmlname= 'units')
-	{
-		global $langs;
-		
-		$langs->load('products');
-		
-		$return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-		$sql = 'select rowid, label from '.MAIN_DB_PREFIX.'c_units where active=1';
-		$resql = $this->db->query($sql);
-		if($resql && $this->db->num_rows($resql) > 0)	
-		{
-			while($res = $this->db->fetch_array($resql, MYSQL_NUM))
-			{           
-				if ($selected == $res[0])
-				{
-					$return.='<option value="'.$res[0].'" selected="selected">'.$langs->trans($res[1]).'</option>';
-				}
-				else
-				{
-					$return.='<option value="'.$res[0].'">'.$langs->trans($res[1]).'</option>';
-				}
-			}
-			$return.='</select>';
-		}
-		return $return;
-	}
+    function load_units($selected = '', $htmlname= 'units')
+    {
+        global $langs;
+
+        $langs->load('products');
+
+        $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+        $sql = 'select rowid, label from '.MAIN_DB_PREFIX.'c_units where active=1';
+        $resql = $this->db->query($sql);
+        if($resql && $this->db->num_rows($resql) > 0)
+        {
+            while($res = $this->db->fetch_array($resql, MYSQL_NUM))
+            {
+                if ($selected == $res[0])
+                {
+                    $return.='<option value="'.$res[0].'" selected="selected">'.$langs->trans($res[1]).'</option>';
+                }
+                else
+                {
+                    $return.='<option value="'.$res[0].'">'.$langs->trans($res[1]).'</option>';
+                }
+            }
+            $return.='</select>';
+        }
+        return $return;
+    }
 
     /**
      *  Return a HTML select list of bank accounts

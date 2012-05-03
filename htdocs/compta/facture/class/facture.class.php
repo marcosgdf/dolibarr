@@ -9,7 +9,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -3104,8 +3104,8 @@ class Facture extends CommonObject
                 $line->tva_tx=19.6;
                 $line->localtax1_tx=0;
                 $line->localtax2_tx=0;
-    		    $line->remise_percent=0;
-    		    $line->fk_unit=1;
+                $line->remise_percent=0;
+                $line->fk_unit=1;
                 if ($xnbp == 1)        // Qty is negative (product line)
     			{
                     $prodid = rand(1, $num_prods);
@@ -3165,6 +3165,7 @@ class Facture extends CommonObject
             $prodid = rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
             $line->fk_unit=1;
+
             $this->lines[$xnbp]=$line;
             $xnbp++;
         }

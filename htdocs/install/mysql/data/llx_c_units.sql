@@ -29,11 +29,3 @@ INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('LM','linear
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M2','square meter','m2', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M3','cubic meter','m3', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('L','liter','l', 1);
-
-
-
-
-
-
-
-

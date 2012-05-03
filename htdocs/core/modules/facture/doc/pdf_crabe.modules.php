@@ -110,8 +110,7 @@ class pdf_crabe extends ModelePDFFactures
 			$this->posxqty=133;
 			$this->posxunit=150;
 		}
-        
-        else
+		else
 		{
 			$this->posxtva=111;
 			$this->posxup=126;
@@ -302,7 +301,6 @@ class pdf_crabe extends ModelePDFFactures
 					{
                         $pdf->MultiCell($this->posxunit-$this->posxqty-1, 4, $qty, 0, 'R');
 					}
-                    
                     else
 					{
                         $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');
@@ -314,8 +312,8 @@ class pdf_crabe extends ModelePDFFactures
                         $pdf->SetXY($this->posxunit, $curY);
                         $pdf->MultiCell($this->posxdiscount-$this->posxunit-1, 4, $unit, 0, 'L');
 					}
-                    
-                	// Discount
+
+					// Discount
 					if ($object->lines[$i]->remise_percent)
 					{
                         $pdf->SetXY($this->posxdiscount-2, $curY);
@@ -1003,12 +1001,11 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 		}
-        
 		else
 		{
 			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');  
 		}
-        
+
 		if($conf->global->PRODUIT_USE_UNITS)
 		{
 			$pdf->line($this->posxunit-1, $tab_top, $this->posxunit-1, $tab_top + $tab_height);

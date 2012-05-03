@@ -200,7 +200,7 @@ class Propal extends CommonObject
             $line->subprice=$price;
             $line->remise_percent=$remise_percent;
             $line->tva_tx=$tva_tx;
-			$line->fk_unit=$prod->fk_unit;
+            $line->fk_unit=$prod->fk_unit;
 
             $this->products[]=$line;
         }
@@ -1121,7 +1121,7 @@ class Propal extends CommonObject
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;
 
-						$line->fk_unit          = $objp->fk_unit;
+                        $line->fk_unit          = $objp->fk_unit;
 
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
@@ -2474,7 +2474,7 @@ class PropaleLigne extends CommonObjectLine
     var $localtax2_tx;
     var $total_localtax1;
     var $total_localtax2;
-    
+
     var $skip_update_total; // Skip update price total for special lines
 
     /**
@@ -2537,7 +2537,7 @@ class PropaleLigne extends CommonObjectLine
             $this->product_label	= $objp->product_libelle;
             $this->product_desc		= $objp->product_desc;
 
-			$this->fk_unit          = $objp->fk_unit;
+            $this->fk_unit          = $objp->fk_unit;
 
             $this->db->free($result);
         }
@@ -2797,8 +2797,6 @@ class PropaleLigne extends CommonObjectLine
             return -2;
         }
     }
-    
-    
 
 }
 

@@ -995,7 +995,6 @@ function dol_print_reduction($reduction,$langs)
     return $string;
 }
 
-
 /**
  * 	Return OS version.
  *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not

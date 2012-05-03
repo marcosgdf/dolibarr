@@ -3,6 +3,7 @@
 -- Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2010      juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -71,5 +72,5 @@ create table llx_product
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Need permission see also hidden products
   import_key				varchar(14),						-- Import key
-  fk_unit					integer      DEFAULT 1     
+  fk_unit					integer      DEFAULT 1
 )ENGINE=innodb;

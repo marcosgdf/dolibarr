@@ -2,6 +2,7 @@
 -- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2011 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2012 Cedric Salvador      <csalvador@gpcsolutions.fr>
+--
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
@@ -16,9 +17,5 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ===================================================================
-
-
--- Delete orphans
--- V4 DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
 ALTER TABLE llx_facturedet_rec ADD CONSTRAINT fk_facturedet_rec_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);

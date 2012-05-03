@@ -95,14 +95,13 @@ class pdf_azur extends ModelePDFPropales
 			$this->posxqty=133;
 			$this->posxunit=150;
 		}
-        
 		else
 		{
 			$this->posxtva=111;
 			$this->posxup=126;
 			$this->posxqty=145;
 		}
-        
+
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 
@@ -289,7 +288,6 @@ class pdf_azur extends ModelePDFPropales
 					{
 						$pdf->MultiCell($this->posxunit-$this->posxqty-1, 4, $qty, 0, 'R');
 					}
-                    
 					else
 					{
 						$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');

@@ -34,7 +34,7 @@ abstract class CommonObjectLine
     protected $db;
     //! Unit id in database
     public $fk_unit;
-    
+
     /**
      *	Returns the text label from units dictionnary
      *
@@ -44,18 +44,18 @@ abstract class CommonObjectLine
 	public function get_unit_label($type='long')
 	{
 		global $langs;
-		
+
 		$langs->load('products');
-		
+
 		$this->db->begin();
-		
+
 		$label_type = 'label';
-		
+
 		if ($type == 'short')
 		{
 			$label_type = 'short_label';
 		}
-		
+
 		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
 		if($resql && $resql->num_rows > 0)

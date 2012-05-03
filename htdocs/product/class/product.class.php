@@ -6,6 +6,7 @@
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -139,7 +140,7 @@ class Product extends CommonObject
 	//! Contains detail of stock of product into each warehouse
 	var $stock_warehouse=array();
 
-	//unit
+	//! Unit
 	var $fk_unit;
 
 	/**
@@ -308,7 +309,7 @@ class Product extends CommonObject
 				$sql.= ", ".$this->finished;
 				$sql.= ", ".$this->fk_unit;
 				$sql.= ")";
-				
+
 				dol_syslog(get_class($this)."::Create sql=".$sql);
 				$result = $this->db->query($sql);
 				if ( $result )
@@ -1092,6 +1093,7 @@ class Product extends CommonObject
 				$this->import_key				= $obj->import_key;
 				$this->entity					= $obj->entity;
 				$this->fk_unit					= $obj->fk_unit;
+
 				$this->db->free($resql);
 
 				// multilangs
@@ -1611,8 +1613,6 @@ class Product extends CommonObject
 
 		return $this->_get_stats($sql,$mode);
 	}
-
-    
 
 	/**
 	 *  Lie un produit associe au produit/service
@@ -2876,18 +2876,18 @@ class Product extends CommonObject
 	function get_unit_label($type='long')
 	{
 		global $langs;
-		
+
 		$langs->load('products');
-		
+
 		$this->db->begin();
-		
+
 		$label_type = 'label';
-		
+
 		if ($type == 'short')
 		{
 			$label_type = 'short_label';
 		}
-		
+
 		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
 		if($resql && $resql->num_rows > 0)

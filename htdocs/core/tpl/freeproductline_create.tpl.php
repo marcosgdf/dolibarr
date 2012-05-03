@@ -83,7 +83,7 @@
 	{
 	    print '<td align="left">';
 	    print $form->select_units($line->fk_unit, "units");
- 	    print '</td>';
+	    print '</td>';
 	}
 	?>
 	<td align="right" nowrap><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>

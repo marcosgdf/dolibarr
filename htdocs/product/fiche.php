@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -197,7 +197,8 @@ if (empty($reshook))
             $object->volume_units       	= $_POST["volume_units"];
             $object->finished           	= $_POST["finished"];
             $object->hidden             	= $_POST["hidden"]=='yes'?1:0;
-			$object->fk_unit				= $_POST["units"];
+            $object->fk_unit				= $_POST["units"];
+
             // MultiPrix
             if($conf->global->PRODUIT_MULTIPRICES)
             {
@@ -820,8 +821,8 @@ else
         $doleditor->Create();
 
         print "</td></tr>";
-        
-		// Units
+
+        // Units
         if($conf->global->PRODUIT_USE_UNITS)
         {
 			print '<tr><td>'.$langs->trans('Unit').'</td>';
@@ -840,7 +841,8 @@ else
         }
         else
         {
-			print '<table class="border" width="100%">';
+            print '<table class="border" width="100%">';
+
             // PRIX
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$object->price.'">';
@@ -1000,7 +1002,7 @@ else
                 print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
                 print '</td></tr>';
             }
-            
+
             // Customs code
             print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2"><input name="customcode" size="10" value="'.$object->customcode.'"></td></tr>';
 
@@ -1030,7 +1032,7 @@ else
             $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
             $doleditor->Create();
             print "</td></tr>";
-            
+
             if($conf->global->PRODUIT_USE_UNITS)
             {
                 print '<tr><td>'.$langs->trans('Unit').'</td>';
@@ -1276,7 +1278,7 @@ else
 
             // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
-		
+
             print "</table>\n";
 
             dol_fiche_end();

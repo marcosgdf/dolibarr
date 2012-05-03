@@ -2755,8 +2755,8 @@ class Commande extends CommonObject
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
-                $this->lines[$i]->fk_unit           = $obj->fk_unit;
-				
+                $this->lines[$i]->fk_unit			= $obj->fk_unit;
+
                 $i++;
             }
 
@@ -3161,8 +3161,6 @@ class OrderLine extends CommonObjectLine
             return -2;
         }
     }
-    
-    
 }
 
 ?>
