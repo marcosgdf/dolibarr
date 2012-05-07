@@ -999,7 +999,7 @@ else
                     print '</td>';
                     // Ligne dates prevues
                     print "<tr $bc[$var]>";
-                    print '<td colspan="5">';
+                    print '<td colspan="'.($conf->global->PRODUCT_USE_UNITS?6:5).'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
                     print '<br>'.$langs->trans("DateEndPlanned").' ';
