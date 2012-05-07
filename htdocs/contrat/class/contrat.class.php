@@ -27,6 +27,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php");
 
 /**
  *	\class      Contrat
@@ -410,7 +411,8 @@ class Contrat extends CommonObject
 		$sql.= " d.date_fin_validite, d.date_cloture,";
 		$sql.= " d.fk_user_author,";
 		$sql.= " d.fk_user_ouverture,";
-		$sql.= " d.fk_user_cloture";
+		$sql.= " d.fk_user_cloture,";
+		$sql.= " d.fk_unit";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
 		$sql.= " ORDER by d.rowid ASC";
@@ -468,6 +470,7 @@ class Contrat extends CommonObject
 				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
+				$line->fk_unit           = $objp->fk_unit;
 
 				$this->lines[]			= $line;
 
@@ -505,7 +508,8 @@ class Contrat extends CommonObject
 		$sql.= " d.date_fin_validite, d.date_cloture,";
 		$sql.= " d.fk_user_author,";
 		$sql.= " d.fk_user_ouverture,";
-		$sql.= " d.fk_user_cloture";
+		$sql.= " d.fk_user_cloture,";
+		$sql.= " d.fk_unit";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d";
 		$sql.= " WHERE d.fk_contrat = ".$this->id;
 		$sql.= " AND (d.fk_product IS NULL OR d.fk_product = 0)";   // fk_product = 0 gardee pour compatibilitee
@@ -563,7 +567,7 @@ class Contrat extends CommonObject
 				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
 				if ($line->statut == 4 && $line->date_fin_prevue < $now) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
-
+				$line->fk_unit        = $objp->fk_unit;
 				$this->lines[]        = $line;
 
 				$total_ttc+=$objp->total_ttc;
@@ -826,7 +830,7 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $fk_unit)
 	{
 		global $user, $langs, $conf;
 
@@ -887,6 +891,7 @@ class Contrat extends CommonObject
 			$sql.= " price_ht, remise";								// TODO A virer
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
 			if ($date_end > 0)   { $sql.= ",date_fin_validite"; }
+			$sql.= ", fk_unit";
 			$sql.= ") VALUES ($this->id, '', '" . $this->db->escape($desc) . "',";
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
 			$sql.= " '".$qty."',";
@@ -899,6 +904,7 @@ class Contrat extends CommonObject
 			$sql.= " ".price2num($price).",".price2num($remise);	// TODO A virer
 			if ($date_start > 0) { $sql.= ",'".$this->db->idate($date_start)."'"; }
 			if ($date_end > 0) { $sql.= ",'".$this->db->idate($date_end)."'"; }
+			$sql.= ", ".$fk_unit;
 			$sql.= ")";
 
 			dol_syslog(get_class($this)."::addline sql=".$sql);
@@ -953,7 +959,7 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_unit)
 	{
 		global $user, $conf, $langs;
 
@@ -1023,6 +1029,7 @@ class Contrat extends CommonObject
 		else { $sql.=",date_ouverture=null"; }
 		if ($date_fin_reel > 0) { $sql.= ",date_cloture='".$this->db->idate($date_fin_reel)."'"; }
 		else { $sql.=",date_cloture=null"; }
+		$sql .= ", fk_unit=".$fk_unit;
 		$sql .= " WHERE rowid = ".$rowid;
 
 		dol_syslog(get_class($this)."::updateline sql=".$sql);
@@ -1541,7 +1548,7 @@ class Contrat extends CommonObject
 /**
  *	Classe permettant la gestion des lignes de contrats
  */
-class ContratLigne
+class ContratLigne extends CommonObjectLine
 {
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
@@ -1742,7 +1749,8 @@ class ContratLigne
 		$sql.= " t.fk_user_author,";
 		$sql.= " t.fk_user_ouverture,";
 		$sql.= " t.fk_user_cloture,";
-		$sql.= " t.commentaire";
+		$sql.= " t.commentaire,";
+		$sql.= " t.fk_unit";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t";
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
 		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
@@ -1788,6 +1796,7 @@ class ContratLigne
 				$this->fk_user_ouverture = $obj->fk_user_ouverture;
 				$this->fk_user_cloture = $obj->fk_user_cloture;
 				$this->commentaire = $obj->commentaire;
+				$this->fk_unit     = $obj->fk_unit; 
 
 			}
 			$this->db->free($resql);
@@ -1887,6 +1896,7 @@ class ContratLigne
 		$sql.= " fk_user_ouverture=".($this->fk_user_ouverture > 0?$this->fk_user_ouverture:"NULL").",";
 		$sql.= " fk_user_cloture=".($this->fk_user_cloture > 0?$this->fk_user_cloture:"NULL").",";
 		$sql.= " commentaire='".$this->db->escape($this->commentaire)."'";
+		$sql.= ", fk_unit=".$this->fk_unit;
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);

@@ -274,6 +274,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
            	$desc = $prod->description;
            	$desc.= $prod->description && $_POST['desc'] ? "\n" : "";
            	$desc.= $_POST['desc'];
+           	$fk_unit = $prod->fk_unit;
         }
         else
         {
@@ -282,6 +283,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
             $tva_tx=str_replace('*','',$_POST['tva_tx']);
             $tva_npr=preg_match('/\*/',$_POST['tva_tx'])?1:0;
             $desc=$_POST['desc'];
+            $fk_unit=$_POST['unit'];
         }
 
         $localtax1_tx=get_localtax($tva_tx,1,$object->societe);
@@ -311,7 +313,8 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $date_end,
                 $price_base_type,
                 $pu_ttc,
-                $info_bits
+                $info_bits,
+                $fk_unit
             );
         }
 
@@ -376,6 +379,7 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! $_POST["
         $objectline->date_fin_validite=$date_end_update;
         $objectline->date_cloture=$date_end_real_update;
         $objectline->fk_user_cloture=$user->id;
+        $objectline->fk_unit=$_POST['unit'];
 
         // TODO verifier price_min si fk_product et multiprix
 
@@ -831,6 +835,7 @@ else
             $sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment,";
+            $sql.= " cd.fk_unit,";
             $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -846,6 +851,7 @@ else
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
+                if($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
                 print '<td width="30">&nbsp;</td>';
                 print "</tr>\n";
@@ -881,6 +887,8 @@ else
                     print '<td align="right">'.price($objp->subprice)."</td>\n";
                     // Quantite
                     print '<td align="center">'.$objp->qty.'</td>';
+                    //Unit
+                    if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans($object->lines[$cursorline-1]->get_unit_label()).'</td>';
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
@@ -925,7 +933,8 @@ else
                     if ($objp->subprice >= 0)
                     {
                         print '<tr '.$bc[$var].'>';
-                        print '<td colspan="6">';
+                        if($conf->global->PRODUCT_USE_UNITS) print '<td colspan="7">';
+                        else print '<td colspan="6">';
 
                         // Date planned
                         print $langs->trans("DateStartPlanned").': ';
@@ -978,6 +987,12 @@ else
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+                    if($conf->global->PRODUCT_USE_UNITS)
+                    {
+                        print '<td align="left">';
+                        print $form->select_units($objp->fk_unit, "unit");
+                        print '</td>';
+                    }
                     print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
                     print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -1005,7 +1020,9 @@ else
             if ($object->statut > 0)
             {
                 print '<tr '.$bc[false].'>';
-                print '<td colspan="6"><hr></td>';
+                if($conf->global->PRODUCT_USE_UNITS) print '<td colspan="7">';
+                else print '<td colspan="6">';
+                print '<hr></td>';
                 print "</tr>\n";
             }
 
@@ -1240,6 +1257,7 @@ else
             print '<td align="center">'.$langs->trans("VAT").'</td>';
             print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
             print '<td align="center">'.$langs->trans("Qty").'</td>';
+            if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans("Unit").'</td>';
             print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
             print '<td>&nbsp;</td>';
             print '<td>&nbsp;</td>';
@@ -1266,6 +1284,7 @@ else
             print '</td>';
 
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
+            if($conf->global->PRODUCT_USE_UNITS) print '<td>&nbsp;</td>';
             print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$object->thirdparty->remise_client.'">%</td>';
             print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
             print '</tr>'."\n";
@@ -1298,6 +1317,12 @@ else
             print '</td>';
             print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
+            if($conf->global->PRODUCT_USE_UNITS)
+            {
+                print '<td align="left">';
+                print $form->select_units($line->fk_unit, "unit");
+                print '</td>';
+            }
             print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$object->thirdparty->remise_client.'">%</td>';
             print '<td align="center" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 
