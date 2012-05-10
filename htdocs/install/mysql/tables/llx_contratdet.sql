@@ -56,6 +56,6 @@ create table llx_contratdet
   fk_user_ouverture     integer,
   fk_user_cloture       integer,
   commentaire           text,
-  fk_unit               integer,      DEFAULT 1  
+  fk_unit               integer       DEFAULT 1  
 
 )ENGINE=innodb;
