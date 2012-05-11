@@ -2016,7 +2016,7 @@ class Form
      *      @param  string	$htmlname        Select name
      * 		@return	string                   HTML select
      */
-    function load_units($selected = '', $htmlname= 'units')
+    function load_units($selected = '', $htmlname = 'units')
     {
         global $langs;
 

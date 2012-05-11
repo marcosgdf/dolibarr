@@ -80,7 +80,7 @@
     if($conf->global->PRODUCT_USE_UNITS)
     {
         print '<td align="left" nowrap="nowrap">';
-        print $form->select_units($line->fk_unit, "units");
+        $form->select_units($line->fk_unit, "units");
         print '</td>';
     }
     ?>
