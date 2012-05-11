@@ -218,6 +218,7 @@ class Product extends CommonObject
 		if (empty($this->status))    	$this->status = 0;
 		if (empty($this->status_buy))   $this->status_buy = 0;
 		if (empty($this->finished))  	$this->finished = 0;
+        if (empty($this->fk_unit))      $this->fk_unit=1;
 
 		$price_ht=0;
 		$price_ttc=0;
@@ -433,6 +434,7 @@ class Product extends CommonObject
 
 		if (empty($this->finished))  			$this->finished = 0;
         if (empty($this->country_id))           $this->country_id = 0;
+        if (empty($this->fk_unit))              $this->fk_unit=1;
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);

@@ -1016,7 +1016,7 @@ class Commande extends CommonObject
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
         if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
-
+        if (empty($fk_unit)) $fk_unit=1;
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
@@ -2150,6 +2150,7 @@ class Commande extends CommonObject
             if (empty($txlocaltax2)) $txlocaltax2=0;
             if (empty($remise)) $remise=0;
             if (empty($remise_percent)) $remise_percent=0;
+            if (empty($fk_unit)) $fk_unit=1;
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
             $pu = price2num($pu);
