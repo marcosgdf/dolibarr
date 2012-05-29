@@ -402,10 +402,20 @@ class Facture extends CommonObject
                         $localtax2_tx,
                         $_facrec->lines[$i]->fk_product,
                         $_facrec->lines[$i]->remise_percent,
-    					'','',0,0,'','HT',0,
+                        '',
+                        '',
+                        0,
+                        0,
+                        '',
+                        'HT',
+                        0,
                         $_facrec->lines[$i]->product_type,
                         $_facrec->lines[$i]->rang,
                         $_facrec->lines[$i]->special_code,
+                        '',
+                        0,
+                        $_facrec->lines[$i]->parent_line,
+                        '',
                         $_facrec->lines[$i]->fk_unit
                     );
 
