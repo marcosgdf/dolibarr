@@ -1261,7 +1261,7 @@ padding: 0px;
 }
 
 .boxhandle {
-	margin: 1px 4px 0px 0px;
+	margin: 1px 1px 0px 0px;
 }
 
 .notopnoleft {
@@ -2315,7 +2315,7 @@ form.listactionsfilter input[type="submit"] {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: 582px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
 
 

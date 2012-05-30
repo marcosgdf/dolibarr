@@ -1,11 +1,12 @@
 ﻿/*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 17:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 ContractsArea=Vertragsübersicht
 ListOfContracts=Liste der Verträge
 LastContracts=%s zuletzt geänderte Verträge
@@ -19,7 +20,10 @@ ContractStatusValidated=Freigegeben
 ContractStatusClosed=Geschlossen
 ServiceStatusInitial=Nicht ausgeführt
 ServiceStatusRunning=Läuft
+ServiceStatusNotLate=Läuft (noch nicht abgelaufen)
+ServiceStatusNotLateShort=Nicht abgelaufen
 ServiceStatusLate=Läuft (abgelaufen)
+ServiceStatusLateShort=Abgelaufen
 ServiceStatusClosed=Geschlossen
 ServicesLegend=Services Legende
 Contracts=Verträge
@@ -49,6 +53,9 @@ DateServiceStart=Service-Beginndatum
 DateServiceEnd=Service-Enddatum
 ShowContract=Zeige Vertrag
 ListOfServices=Liste der Services
+ListOfInactiveServices=Liste der nicht aktiven Services
+ListOfExpiredServices=Liste der abgelaufenen, aktiven Services
+ListOfClosedServices=Liste der geschlossenen Services
 ListOfRunningContractsLines=Liste der aktiven Vertragspositionen
 ListOfRunningServices=Liste aktiver Services
 NotActivatedServices=Inaktive Services (in freigegebenen Verträgen)
@@ -67,43 +74,28 @@ DateStartReal=Effektiver Beginn
 DateStartRealShort=Beginn eff.
 DateEndReal=Effektives Ende
 DateEndRealShort=Ende eff.
-NbOfServices=Anzahl der Services
-CloseService=Service schließen
-ServicesNomberShort= %s Service(s)
-RunningServices=Laufende Services
-BoardRunningServices=Abgelaufene, aktive Services
-ServiceStatus=Service-Status
+NbOfServices=Anzahl der Leistungen
+CloseService=Leistung schließen
+ServicesNomberShort= %s Leistung(en)
+RunningServices=Laufende Leistungen
+BoardRunningServices=Abgelaufene, aktive Leistungen
+ServiceStatus=Leistungs-Status
 DraftContracts=Vertragsentwürfe
-CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Services
+CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Leistungen
 CloseAllContracts=Alle Verträge schließen
+DeleteContractLine=Vertragsposition löschen
+ConfirmDeleteContractLine=Möchten Sie diese Vertragsposition wirklich löschen?
 MoveToAnotherContract=In einen anderen Vertrag verschieben
 ConfirmMoveToAnotherContract=Haben Sie einen neuen Vertrag für das Verschieben gewählt und möchten Sie diesen Vorgang jetzt durchführen.
-ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag (desselben Partners) für die Verschiebung des Services:
+ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag (desselben Partners) für die Verschiebung der Leistungen:
+PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
+ExpiredSince=Abgelaufen seit
+RelatedContracts=Verknüpfte Verträge
+NoExpiredServices=Keine abgelaufen aktiven Dienste
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter
 TypeContact_contrat_internal_SALESREPFOLL=Vertragsnachverfolgung durch Vertreter
 TypeContact_contrat_external_BILLING=Rechnungskontakt des Kunden
 TypeContact_contrat_external_CUSTOMER=Nachverfolgung durch Kundenkontakt
 TypeContact_contrat_external_SALESREPSIGN=Vertragsunterzeichnung durch Kundenkontakt
-
-ServiceStatusNotLate=Läuft (nicht abgelaufen)
-ServiceStatusNotLateShort=Läuft
-ServiceStatusLateShort=Abgelaufen
-ListOfInactiveServices=Liste inaktiver Services
-ListOfExpiredServices=Liste abgelaufener Services
-ListOfClosedServices=Liste geschlossener Services
-DeleteContractLine=Lösche Vertragsposition
-ConfirmDeleteContractLine=Möchten Sie diese Vertragsposition wirklich löschen?
-PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
-ExpiredSince=Abgelaufen seit
-RelatedContracts=Verknüpfte Verträge
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON nicht definiert
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-NoExpiredServices=Keine abgelaufen aktiven Dienste
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:42).
+Error_CONTRACT_ADDON_NotDefined=Die Konstante CONTRACT_ADDON ist nicht definiert

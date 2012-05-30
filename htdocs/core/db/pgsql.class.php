@@ -40,7 +40,7 @@ class DoliDBPgsql
     //! Database label
 	static $label='PostgreSQL';      // Label of manager
 	//! Charset
-	static $forcecharset='latin1';
+	var $forcecharset='UTF8';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(8,4,0);	// Version min database
 
@@ -81,8 +81,9 @@ class DoliDBPgsql
 	{
 		global $conf,$langs;
 
-		$this->forcecharset=$conf->file->character_set_client;
-		$this->forcecollate=$conf->db->dolibarr_main_db_collation;
+		if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
+		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
+
 		$this->database_user=$user;
 
 		$this->transaction_opened=0;
@@ -110,6 +111,7 @@ class DoliDBPgsql
 		// Essai connexion serveur
 		//print "$host, $user, $pass, $name, $port";
 		$this->db = $this->connect($host, $user, $pass, $name, $port);
+
 		if ($this->db)
 		{
 			$this->connected = 1;
@@ -229,7 +231,7 @@ class DoliDBPgsql
     			}
 
     			// We remove end of requests "AFTER fieldxxx"
-    			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
+    			$line=preg_replace('/\sAFTER [a-z0-9_]+/i','',$line);
 
     			// We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
     			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
@@ -256,7 +258,7 @@ class DoliDBPgsql
                 }
 
                 // alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
-    			// ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
+    			// ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity)
     			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
     			{
     				$line = "-- ".$line." replaced by --\n";
@@ -264,14 +266,22 @@ class DoliDBPgsql
     			}
 
                 // Translate order to drop foreign keys
-                // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
+                // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx
                 if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
                 }
 
-    			// alter table add [unique] [index] (field1, field2 ...)
+                // Translate order to add foreign keys
+                // ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)
+                if (preg_match('/ALTER\s+TABLE\s+(.*)\s*ADD CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
+                {
+                    $line=preg_replace('/;$/','',$line);
+                    $line.=" DEFERRABLE INITIALLY IMMEDIATE;";
+                }
+
+                // alter table add [unique] [index] (field1, field2 ...)
     			// ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
     			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
     			{
@@ -373,12 +383,13 @@ class DoliDBPgsql
 		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
 		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
 
-		//if (! $name) $name="postgres";
+		if (! $name) $name="postgres";    // When try to connect using admin user
 
 		// try first Unix domain socket (local)
 		if (! $host || $host == "" || $host == "localhost" || $host == "127.0.0.1")
 		{
-			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";
+			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";    // $name may be empty
+			//print "$con_string";exit;
 			$this->db = pg_connect($con_string);
 		}
 
@@ -977,10 +988,15 @@ class DoliDBPgsql
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
-		if (empty($charset))   $charset=$this->forcecharset;
-		if (empty($collation)) $collation=$this->collation;
+	    if (empty($charset))   $charset=$this->forcecharset;
+		if (empty($collation)) $collation=$this->forcecollate;
 
-		$ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'');
+		// Test charset match LC_TYPE (pgsql error otherwise)
+		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
+
+		$sql='CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'';
+		dol_syslog($sql,LOG_DEBUG);
+		$ret=$this->query($sql);
 		return $ret;
 	}
 

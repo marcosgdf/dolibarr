@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,7 @@ $sortfield="f.datef";
 
 
 // Create predefined invoice
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
 	$facturerec = new FactureRec($db);
 	$facturerec->titre = $_POST["titre"];
@@ -72,17 +72,16 @@ if ($_POST["action"] == 'add')
 	}
 	else
 	{
-		$_GET["action"] = "create";
-		$_GET["facid"] = $_POST["facid"];
+		$action = "create";
 		$mesg = '<div class="error">'.$facturerec->error.'</div>';
 	}
 }
 
 // Suppression
-if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
+if ($action == 'delete' && $user->rights->facture->supprimer)
 {
 	$facrec = new FactureRec($db);
-	$facrec->fetch(GETPOST('facid','int'));
+	$facrec->fetch($facid);
 	$facrec->delete();
 	$facid = 0 ;
 }
@@ -100,7 +99,7 @@ $form = new Form($db);
 /*
  * Create mode
  */
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("CreateRepeatableInvoice"));
 
@@ -109,7 +108,7 @@ if ($_GET["action"] == 'create')
 	$facture = new Facture($db);   // Source invoice
 	$product_static=new Product($db);
 
-	if ($facture->fetch($_GET["facid"]) > 0)
+	if ($facture->fetch($facid) > 0)
 	{
 		print '<form action="fiche-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -242,11 +241,13 @@ if ($_GET["action"] == 'create')
 					$text.= ' - '.$objp->product_label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text,$description,3,'','',$i);
+
 					// Show range
 					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+
 					print '</td>';
 				}
 				else

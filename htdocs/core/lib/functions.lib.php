@@ -138,6 +138,7 @@ function getBrowserInfo()
     elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
     elseif (preg_match('/chrome/i',                 $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome'; }
     elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"]))                      { $name='iceweasel'; $version=$reg[2]; }
+    elseif (preg_match('/epiphany/i',$_SERVER["HTTP_USER_AGENT"]))                       { $name='epiphany';  $version=$reg[2]; }
     elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"], $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
     elseif (preg_match('/opera(\/|\s)([\d\.]*)/i',  $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='opera';     $version=$reg[2]; }
     elseif (preg_match('/msie(\/|\s)([\d\.]*)/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
@@ -1006,7 +1007,7 @@ function dol_now($mode='gmt')
     else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
-        $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
+        $tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
         $ret=dol_now('gmt')+($tzsecond*3600);
     }
     /*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
@@ -2681,9 +2682,8 @@ function get_localtax($tva, $local, $societe_acheteuse="")
 {
     global $db, $conf, $mysoc;
 
-    // TODO Can we uncomment this ?
-    //if ($local == 1 && empty($conf->global->FACTURE_LOCAL_TAX1_OPTION)) return;
-    //if ($local == 2 && empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) return;
+    if ($local == 1 && ! $mysoc->localtax1_assuj) return 0;
+    if ($local == 2 && ! $mysoc->localtax2_assuj) return 0;
 
     $code_pays=$mysoc->pays_code;
 
@@ -2715,12 +2715,13 @@ function get_localtax($tva, $local, $societe_acheteuse="")
  *	Return vat rate of a product in a particular selling country or default country
  *  vat if product is unknown
  *
- *  @param	int		$idprod          Id of product or 0 if not a predefined product
- *  @param  string	$countrycode     Country code (FR, US, IT, ...)
- *  @return int				         <0 if KO, Vat rate if OK
+ *  @param	int			$idprod          	Id of product or 0 if not a predefined product
+ *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *	@param	int			$idprodfournprice	Id product_fournisseur_price (for supplier order/invoice)
+ *  @return int					         	<0 if KO, Vat rate if OK
  *	TODO May be this should be better as a method of product class
  */
-function get_product_vat_for_country($idprod, $countrycode)
+function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice=0)
 {
     global $db,$mysoc;
 
@@ -2733,9 +2734,17 @@ function get_product_vat_for_country($idprod, $countrycode)
         $product=new Product($db);
         $result=$product->fetch($idprod);
 
-        if ($mysoc->pays_code == $countrycode) // If selling country is ours
+        if ($mysoc->pays_code == $thirdparty_seller->country_code) // If selling country is ours
         {
-            $ret=$product->tva_tx;    // Default vat of product we defined
+            if ($idprodfournprice > 0)     // We want vat for product for a supplier order or invoice
+            {
+                $product->get_buyprice($idprodfournprice,0,0,0);
+                $ret=$product->vatrate_supplier;
+            }
+            else
+            {
+                $ret=$product->tva_tx;    // Default vat of product we defined
+            }
             $found=1;
         }
         else
@@ -2751,7 +2760,7 @@ function get_product_vat_for_country($idprod, $countrycode)
         // If vat of product for the country not found or not defined, we return higher vat of country.
         $sql.="SELECT taux as vat_rate";
         $sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-        $sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$countrycode."'";
+        $sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
         $sql.=" ORDER BY t.taux DESC, t.recuperableonly ASC";
         $sql.=$db->plimit(1);
 
@@ -2805,16 +2814,17 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
  *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
  *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
  *	@param  int			$idprod					Id product
+ *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  */
-function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
+function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idprodfournprice=0)
 {
     global $conf;
 
     if (!is_object($societe_vendeuse)) return -1;
     if (!is_object($societe_acheteuse)) return -1;
 
-    dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", SERVICE_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
+    dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
 
     // Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
     if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj)
@@ -2835,7 +2845,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
     if ($societe_vendeuse->country_code == $societe_acheteuse->country_code) // Warning ->country_code not always defined
     {
         //print 'VATRULE 3';
-        return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
+        return get_product_vat_for_country($idprod,$societe_vendeuse,$idprodfournprice);
     }
 
     // Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -2854,7 +2864,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         else
         {
             //print 'VATRULE 5';
-            return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
+            return get_product_vat_for_country($idprod,$societe_vendeuse,$idprodfournprice);
         }
     }
 
@@ -2866,7 +2876,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
         {
             //print 'VATRULE 6';
-            return get_product_vat_for_country($idprod,$societe_acheteuse->country_code);
+            return get_product_vat_for_country($idprod,$societe_acheteuse,$idprodfournprice);
         }
     }
 
@@ -3984,18 +3994,6 @@ function printCommonFooter($zone='private')
 }
 
 /**
- * Convert unicode
- *
- * @param	string	$unicode	Unicode
- * @param	string	$encoding	Encoding type
- * @return	string				Unicode converted
- */
-function unichr($unicode , $encoding = 'UTF-8')
-{
-	return mb_convert_encoding("&#{$unicode};", $encoding, 'HTML-ENTITIES');
-}
-
-/**
  *	Convert an array with RGB value into hex RGB value
  *
  *  @param	array	$arraycolor			Array
@@ -4024,11 +4022,11 @@ function getCurrencySymbol($currency_code)
 
 	$form->load_cache_currencies();
 
-	if (is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
+	if (function_exists("mb_convert_encoding") && is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
 	{
 		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
 		{
-			$currency_sign.= unichr($unicode);
+			$currency_sign .= mb_convert_encoding("&#{$unicode};", "UTF-8", 'HTML-ENTITIES');
 		}
 	}
 	else

@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 19:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 UserCard=Benutzerkarte
 ContactCard=Kontaktkarte
 GroupCard=Firmenverbundkarte
@@ -48,8 +49,11 @@ LoginNotDefined=Benutzername ist nicht gesetzt.
 NameNotDefined=Name ist nicht gesetzt.
 ListOfUsers=Liste der Benutzer
 Administrator=Administrator
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator mit allen Rechten
+AdministratorDesc=Administrator
 DefaultRights=Standardberechtigungen
-DefaultRightsDesc=Definieren Sie hier die, neu erstellten Benutzern automatisch zugewiesenen, Standardberechtigungen.
+DefaultRightsDesc=Definieren Sie hier die neu erstellten Benutzern automatisch zugewiesenen Standardberechtigungen.
 DolibarrUsers=Benutzer
 LastName=Nachname
 FirstName=Vorname
@@ -57,8 +61,8 @@ ListOfGroups=Liste von Gruppen
 NewGroup=Neue Gruppe
 CreateGroup=Gruppe erstellen
 RemoveFromGroup=Gruppenzuweisung entfernen
-PasswordChangedAndSentTo=Passwort geändert und an <b>%s</b> gesandt.
-PasswordChangeRequestSent=Antrag auf eine Änderung das Passworts für <b>%s</b> an <b>%s</b> gesandt.
+PasswordChangedAndSentTo=Passwort geändert und an <b>%s</b> gesendet.
+PasswordChangeRequestSent=Anfrage auf eine Änderung das Passworts für <b>%s</b> an <b>%s</b> gesendet.
 MenuUsersAndGroups=Benutzer & Gruppen
 LastGroupsCreated=%s zuletzt erstellte Gruppen
 LastUsersCreated=%s zuletzt erstellte Benutzer
@@ -74,7 +78,12 @@ ListOfGroupsForUser=Liste der Gruppen dieses Benutzers
 UsersToAdd=Dieser Gruppe zuzuweisende Benutzer
 GroupsToAdd=Diesem Benutzer zuzuweisende Gruppen
 NoLogin=Kein Login
+LinkToCompanyContact=Mit Partner/Kontakt verknüpfen
+LinkedToDolibarrMember=Mit Mitglied verknüpfen
+LinkedToDolibarrUser=Mit Systembenutzer verknüpft
+LinkedToDolibarrThirdParty=Mit Partner verknüpft
 CreateDolibarrLogin=Benutzerkonto erstellen
+CreateDolibarrThirdParty=Neuen Partner erstellen
 LoginAccountDisable=Benutzerkonto deaktiviert. Zum Aktivieren bitte neuen Login anlegen.
 LoginAccountDisableInDolibarr=Benutzerkonto im System deaktiviert.
 LoginAccountDisableInLdap=Benutzerkonto in dieser Domäne deaktiviert.
@@ -86,9 +95,14 @@ ExportDataset_user_1=Benutzer und -eigenschaften
 DomainUser=Domain-Benutzer %s
 Reactivate=Reaktivieren
 CreateInternalUserDesc=Dieses Formular erlaubt Ihnen das Anlegen eines unternehmensinternen Benutzers. Zum Anlegen eines externen Benutzers (Kunden, Lieferanten, ...), verwenden Sie bitte die 'Benutzer erstellen'-Schaltfläche in der Kontaktkarte des jeweiligen Partnerkontakts.
-InternalExternalDesc=Ein <b>interner</b> Benutzer ist Teil Ihres Unternehmens/Ihrer Stiftung. <br> Ein <b>externer</b> Benutzer ist ein Kunde, Lieferant oder Anderes. <br><br> In beiden Fällen können Sie die Berechtigungen definieren - externe Benutzer können zudem auch einen andere Menüverwaltung als interne Benutzer haben (siehe Home - Einstellungen - Anzeige)
+InternalExternalDesc=Ein <b>interner</b> Benutzer ist Teil Ihres Unternehmens/Ihrer Stiftung. <br> Ein <b>externer</b> Benutzer ist ein Kunde, Lieferant oder Anderes.
+PermissionInheritedFromAGroup=Berechtigung durch eine Gruppenzugehörigkeit gererbt.
+Inherited=Geerbt
+UserWillBeInternalUser=Erstellter Benutzer ist intern (mit keinem bestimmten Partner verknüpft)
+UserWillBeExternalUser=Erstellter Benutzer ist extern (mit einem bestimmten Partner verknüpft)
 IdPhoneCaller=Anrufer ID
-UserLogged=Benutzer %s verbunden
+UserLogged=Benutzer %s eingeloggt
+UserLogoff=User %s ausgeloggt
 NewUserCreated=Benutzer %s erstellt
 NewUserPassword=Passwort ändern für %s
 EventUserModified=Benutzer %s geändert
@@ -99,36 +113,11 @@ NewGroupCreated=Gruppe %s erstellt
 GroupModified=Gruppe %s geändert
 GroupDeleted=Gruppe %s entfernt
 ConfirmCreateContact=Möchten Sie für diesen Kontakt wirklich ein Systembenutzerkonto anlegen?
-LoginToCreate=Zu erstellende Anmeldung
-
-SuperAdministrator=Super Administrator
-SuperAdministratorDesc=Administrator mit allen Rechten
-LinkToCompanyContact=Mit Partner/Kontakt verknüpfen
-LinkedToDolibarrMember=Mit Mitglied verknüpfen
-LinkedToDolibarrUser=Mit Systembenutzer verknüpfen
-LinkedToDolibarrThirdParty=Mit Partner verknüpfen
-CreateDolibarrThirdParty=Neuen Partner erstellen
 ConfirmCreateLogin=Möchten Sie für dieses Mitglied wirklich ein Benutzerkonto erstellen?
 ConfirmCreateThirdParty=Möchten Sie zu diesem Mitglied wirklich einen Partner erstellen?
+LoginToCreate=Zu erstellende Anmeldung
 NameToCreate=Name des neuen Partners
-
-PermissionInheritedFromAGroup=Berechtigung durch eine Gruppenzugehörigkeit gererbt.
-Inherited=Geerbt
 YourRole=Ihre Rolle
 YourQuotaOfUsersIsReached=Ihr Kontingent aktiver Benutzer ist erreicht
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-UserWillBeExternalUser=Erstellt Anwender einen externen Benutzer werden (weil zu einem bestimmten Dritten verbunden)
-UserLogoff=Benutzer %s logout
-NbOfUsers=Nb von Benutzern
-DontDowngradeSuperAdmin=Nur ein Superadmin kann ein Downgrade superadmin
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:32:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-AdministratorDesc=Administrator-Einheit
-UserWillBeInternalUser=Erstellt Nutzer wird ein interner Benutzer sein (weil nicht an einen bestimmten Dritten verlinkt)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:45).
+NbOfUsers=Anzahl der Benutzer
+DontDowngradeSuperAdmin=Nur ein SuperAdmin kann einen SuperAdmin downgraden

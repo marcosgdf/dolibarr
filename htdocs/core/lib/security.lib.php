@@ -373,9 +373,16 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 {
                     include_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
                     $projectstatic=new Project($db);
-                    $tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,$user->societe_id);
+                    $tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
                     $tmparray=explode(',',$tmps);
                     if (! in_array($objectid,$tmparray)) accessforbidden();
+                }
+                else
+                {
+                	$sql = "SELECT dbt.".$dbt_select;
+                	$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+                	$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+                	$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
             else if (! in_array($feature,$nocheck))	// By default we check with link to third party

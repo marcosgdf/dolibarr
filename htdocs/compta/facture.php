@@ -82,6 +82,12 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $object=new Facture($db);
 
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
@@ -145,6 +151,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer)
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
 	$result = $object->fetch($id);
+	$object->fetch_thirdparty();
 	$result = $object->delete();
 	if ($result > 0)
 	{
@@ -1118,7 +1125,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         unset($_POST['qty']);
         unset($_POST['type']);
         unset($_POST['idprod']);
-        unset($_POST['remmise_percent']);
+        unset($_POST['remise_percent']);
         unset($_POST['dp_desc']);
         unset($_POST['np_desc']);
         unset($_POST['np_price']);
@@ -3264,7 +3271,7 @@ else
         if ($userid)
         {
             if ($userid == -1) $sql.=' AND f.fk_user_author IS NULL';
-            else $sql.=' AND f.fk_user_author = '.$user->id;
+            else $sql.=' AND f.fk_user_author = '.$userid;
         }
         if ($_GET['filtre'])
         {
