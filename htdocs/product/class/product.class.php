@@ -140,6 +140,8 @@ class Product extends CommonObject
 	//! Contains detail of stock of product into each warehouse
 	var $stock_warehouse=array();
 
+	var $oldcopy;
+
 	//! Unit
 	var $fk_unit;
 
@@ -257,7 +259,7 @@ class Product extends CommonObject
 		    return -2;
 		}
 
-		dol_syslog(get_class($this)."::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
         $now=dol_now();
 
@@ -365,7 +367,7 @@ class Product extends CommonObject
 			{
 				// Product already exists with this ref
 				$langs->load("products");
-				$this->error = $langs->transnoentitiesnoconv("ErrorProductAlreadyExists",$this->ref);
+				$this->error = "ErrorProductAlreadyExists";
 			}
 		}
 		else
@@ -409,6 +411,8 @@ class Product extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
+
+		$this->db->begin();
 
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
@@ -513,7 +517,35 @@ class Product extends CommonObject
 				// Fin appel triggers
 			}
 
-			return 1;
+			if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+			{
+				// We remove directory
+				if ($conf->product->dir_output)
+				{
+					$olddir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->oldcopy->ref);
+					$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
+					if (file_exists($olddir))
+					{
+						$res=@dol_move($olddir, $newdir);
+						if (! $res)
+						{
+							$this->error='ErrorFailToMoveDir';
+							$error++;
+						}
+					}
+				}
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -$error;
+			}
 		}
 		else
 		{
@@ -609,6 +641,25 @@ class Product extends CommonObject
     					$this->error = $this->db->lasterror();
     				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
     				}
+                }
+
+                if (! $error)
+                {
+                	// We remove directory
+                	$ref = dol_sanitizeFileName($this->ref);
+                	if ($conf->product->dir_output)
+                	{
+                		$dir = $conf->product->dir_output . "/" . $ref;
+                		if (file_exists($dir))
+                		{
+                			$res=@dol_delete_dir_recursive($dir);
+                			if (! $res)
+                			{
+                				$this->error='ErrorFailToDeleteDir';
+                				$error++;
+                			}
+                		}
+                	}
                 }
 
 				if ($error)
@@ -1023,7 +1074,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished";
+		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " datec, tms, import_key, fk_unit, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -1101,10 +1152,10 @@ class Product extends CommonObject
 				$this->db->free($resql);
 
 				// multilangs
-				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
+				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				// Load multiprices array
-				if ($conf->global->PRODUIT_MULTIPRICES)
+				if (! empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
@@ -2377,9 +2428,12 @@ class Product extends CommonObject
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT reel, fk_entrepot, pmp";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " WHERE fk_product = '".$this->id."'";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
+		$sql.= " WHERE w.entity = (".getEntity('warehouse', 1).")";
+		$sql.= " AND w.rowid = ps.fk_entrepot";
+		$sql.= " AND ps.fk_product = ".$this->id;
 
 		dol_syslog(get_class($this)."::load_stock sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2587,7 +2641,7 @@ class Product extends CommonObject
 
     				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
-    				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
+    				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $dir.$file))
     				{
     					$nbphoto++;
     					$photo = $file;
@@ -2596,8 +2650,8 @@ class Product extends CommonObject
     					if ($size == 1) {   // Format vignette
     						// On determine nom du fichier vignette
     						$photo_vignette='';
-    						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs)) {
-    							$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo)."_small".$regs[0];
+    						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $photo, $regs)) {
+    							$photo_vignette=preg_replace('/'.$regs[0].'/i', '', $photo)."_small".$regs[0];
     							if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
     						}
 
@@ -2632,7 +2686,7 @@ class Product extends CommonObject
     						{
     							$return.= '<br>';
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-    							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+    							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
     							{
     								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
@@ -2719,16 +2773,16 @@ class Product extends CommonObject
 			while (($file = readdir($handle)) != false)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
-				if (dol_is_file($dir.$file))
+				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $dir.$file))
 				{
 					$nbphoto++;
 
 					// On determine nom du fichier vignette
 					$photo=$file;
 					$photo_vignette='';
-					if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
+					if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $photo, $regs))
 					{
-						$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo).'_small'.$regs[0];
+						$photo_vignette=preg_replace('/'.$regs[0].'/i', '', $photo).'_small'.$regs[0];
 					}
 
 					$dirthumb = $dir.'thumbs/';

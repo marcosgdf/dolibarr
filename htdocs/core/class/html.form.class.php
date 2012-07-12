@@ -2266,6 +2266,7 @@ class Form
         {
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
+            $button='';
             if (! is_int($useajax))
             {
                 $button=$useajax;
@@ -2309,9 +2310,9 @@ class Form
 			             		});
 			             		//alert(options);
 			             	}
-			             	location.href=\''.$pageyes.'\' + options;
+			             	location.href=\''.dol_escape_js($pageyes).'\' + options;
 			             }
-                         '.($pageno?'if (choice == \'ko\') location.href=\''.$pageno.'\';':'').'
+                         '.($pageno?'if (choice == \'ko\') location.href=\''.dol_escape_js($pageno).'\';':'').'
 		              },
 			        buttons: {
 			            \''.dol_escape_js($langs->transnoentities("Yes")).'\': function() {

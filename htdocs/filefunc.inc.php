@@ -29,7 +29,7 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.2.0-beta');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.2.0');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Define syslog constants
@@ -54,7 +54,7 @@ if (! defined('LOG_DEBUG'))
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
-error_reporting(E_ALL & ~(E_STRICT|E_NOTICE));
+error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
 //error_reporting(E_ALL | E_STRICT);
 
 

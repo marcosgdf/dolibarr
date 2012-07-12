@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load('bills');
@@ -75,7 +76,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
         if (dol_mkdir($upload_dir) >= 0)
         {
-            $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
+            $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
             if (is_numeric($resupload) && $resupload > 0)
             {
                 if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)

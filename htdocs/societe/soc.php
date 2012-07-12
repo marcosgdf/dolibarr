@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('thirdpartycard'));
 
 $parameters=array('id'=>$socid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=$hookmanager->errors;
+$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
 if (empty($reshook))
 {
@@ -450,6 +450,21 @@ if (empty($reshook))
                 exit;
             }
         }
+    }
+
+    // Remove file in doc form
+    else if ($action == 'remove_file')
+    {
+    	if ($object->fetch($socid))
+    	{
+    		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+    		$langs->load("other");
+    		$upload_dir = $conf->societe->dir_output;
+    		$file = $upload_dir . '/' . GETPOST('file');
+    		dol_delete_file($file,0,0,0,$object);
+    		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+    	}
     }
 }
 

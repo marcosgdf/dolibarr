@@ -169,6 +169,7 @@ SuppliersPrices=Prix fournisseurs
 CustomCode=Code douane
 CountryOrigin=Pays d'origine
 HiddenIntoCombo=Caché dans les listes
+Nature=Nature
 DictionnaryUnits=Unités
 ShortLabel=Libellé court
 Unit=Unité
