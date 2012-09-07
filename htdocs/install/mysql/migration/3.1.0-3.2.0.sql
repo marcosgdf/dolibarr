@@ -452,3 +452,11 @@ ALTER TABLE llx_facture_fourn ADD COLUMN extraparams varchar(255) AFTER import_k
 ALTER TABLE llx_boxes ADD COLUMN maxline integer NULL;
 
 ALTER TABLE llx_product_fournisseur_price MODIFY fk_product_fournisseur integer DEFAULT 0;
+
+UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
+UPDATE llx_product SET canvas = NULL where canvas = 'product@product';
+UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
+
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'SOCIETE_CODECOMPTA_ADDON' AND __DECRYPT('value')__ = 'mod_codecompta_digitaria';
+
+ALTER TABLE llx_c_barcode_type ADD UNIQUE INDEX uk_c_barcode_type(code, entity);

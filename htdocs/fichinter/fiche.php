@@ -195,6 +195,23 @@ else if ($action == 'builddoc' && $user->rights->ficheinter->creer)	// En get ou
     }
 }
 
+// Remove file in doc form
+else if ($action == 'remove_file')
+{
+	if ($object->fetch($id))
+	{
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+		$object->fetch_thirdparty();
+
+		$langs->load("other");
+		$upload_dir = $conf->ficheinter->dir_output;
+		$file = $upload_dir . '/' . GETPOST('file');
+		dol_delete_file($file,0,0,0,$object);
+		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+	}
+}
+
 // Set into a project
 else if ($action == 'classin' && $user->rights->ficheinter->creer)
 {
@@ -206,6 +223,7 @@ else if ($action == 'classin' && $user->rights->ficheinter->creer)
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->ficheinter->supprimer)
 {
 	$object->fetch($id);
+	$object->fetch_thirdparty();
 	$object->delete($user);
 
     Header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
@@ -1100,7 +1118,7 @@ else if ($id > 0 || ! empty($ref))
             print '<td align="center" nowrap="nowrap">';
             $timearray=dol_getdate(mktime());
             if (!GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
-            else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'),GETPOST('disec','int'),GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
+            else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
             $form->select_date($timewithnohour,'di',1,1,0,"addinter");
             print '</td>';
 
