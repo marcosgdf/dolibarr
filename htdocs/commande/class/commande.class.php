@@ -283,7 +283,7 @@ class Commande extends CommonObject
 
                         dol_syslog("Rename ok");
                         // Suppression ancien fichier PDF dans nouveau rep
-                        dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'.*');
+                        dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'*.*');
                     }
                 }
             }
@@ -685,7 +685,7 @@ class Commande extends CommonObject
                         $this->lines[$i]->remise_percent,
                         $this->lines[$i]->info_bits,
                         $this->lines[$i]->fk_remise_except,
-    					'HT',
+                        'HT',
                         0,
                         $this->lines[$i]->date_start,
                         $this->lines[$i]->date_end,
@@ -2076,11 +2076,16 @@ class Commande extends CommonObject
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
         if ($this->db->query($sql) )
         {
-            if (($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 1) && $this->propale_id)
+            if (! empty($conf->propal->enabled) && ! empty($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER))
             {
-                $propal = new Propal($this->db);
-                $propal->fetch($this->propale_id);
-                $propal->classer_facturee();
+                $this->fetchObjectLinked('','propal',$this->id,$this->element);
+                if (! empty($this->linkedObjects))
+                {
+                    foreach($this->linkedObjects['propal'] as $element)
+                    {
+                        $ret=$element->classer_facturee();
+                    }
+                }
             }
             return 1;
         }
@@ -2303,7 +2308,7 @@ class Commande extends CommonObject
         		}
         		if (file_exists($dir))
         		{
-        			if (! dol_delete_dir($dir))
+        			if (! dol_delete_dir_recursive($dir))
         			{
         				$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
         				$this->db->rollback();

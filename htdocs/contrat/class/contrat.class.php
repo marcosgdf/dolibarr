@@ -228,11 +228,9 @@ class Contrat extends CommonObject
 	 *  Close all lines of a contract
 	 *
 	 *  @param	User		$user      Object User making action
-	 *  @param  Translate	$langs     Object Lang
-	 *  @param  Conf		$conf      Object Conf
 	 *	@return	void
 	 */
-	function cloture($user,$langs='',$conf='')
+	function cloture($user)
 	{
 		$this->db->begin();
 
@@ -259,7 +257,7 @@ class Contrat extends CommonObject
 
 		if ($this->statut == 0)
 		{
-			$result=$this->validate($user,$langs,$conf);
+			$result=$this->validate($user);
 			if ($result < 0) $ok=false;
 		}
 
@@ -278,12 +276,12 @@ class Contrat extends CommonObject
 	 *  Validate a contract
 	 *
 	 *  @param	User		$user      	Objet User
-	 *  @param  Translate	$langs     	Environnement langue de l'utilisateur
-	 *  @param  Conf		$conf      	Environnement de configuration lors de l'operation
 	 * 	@return	int						<0 if KO, >0 if OK
 	 */
-	function validate($user,$langs,$conf)
+	function validate($user)
 	{
+		global $langs, $conf;
+
 		$error=0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
@@ -355,7 +353,8 @@ class Contrat extends CommonObject
 				$this->note_private				= $result["note_private"];
 				$this->note_public				= $result["note_public"];
 
-				$this->fk_projet				= $result["fk_projet"];
+				$this->fk_projet				= $result["fk_projet"]; // deprecated
+				$this->fk_project				= $result["fk_projet"];
 
 				$this->socid					= $result["fk_soc"];
 				$this->fk_soc					= $result["fk_soc"];
@@ -445,7 +444,7 @@ class Contrat extends CommonObject
 				$line->statut			= $objp->statut;
 				$line->remise_percent	= $objp->remise_percent;
 				$line->price_ht			= $objp->price_ht;
-				$line->price			= $objp->price;	// For backward compatibility
+				$line->price			= $objp->price_ht;	// For backward compatibility
 				$line->total_ht			= $objp->total_ht;
 				$line->total_tva		= $objp->total_tva;
 				$line->total_localtax1	= $objp->total_localtax1;
@@ -701,12 +700,12 @@ class Contrat extends CommonObject
 	 *  Supprime l'objet de la base
 	 *
 	 *  @param	User		$user       Utilisateur qui supprime
-	 *  @param  Translate	$langs      Environnement langue de l'utilisateur
-	 *  @param  Conf		$conf       Environnement de configuration lors de l'operation
 	 *  @return int         			< 0 si erreur, > 0 si ok
 	 */
-	function delete($user,$langs='',$conf='')
+	function delete($user)
 	{
+		global $conf, $langs;
+
 		$error=0;
 
 		$this->db->begin();
@@ -801,9 +800,33 @@ class Contrat extends CommonObject
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			if ($result < 0) {
+				$error++; $this->errors=$interface->errors;
+			}
 			// Fin appel triggers
+		}
 
+		if (! $error)
+		{
+			// We remove directory
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->contrat->dir_output)
+			{
+				$dir = $conf->contrat->dir_output . "/" . $ref;
+				if (file_exists($dir))
+				{
+					$res=@dol_delete_dir_recursive($dir);
+					if (! $res)
+					{
+						$this->error='ErrorFailToDeleteDir';
+						$error++;
+					}
+				}
+			}
+		}
+
+		if (! $error)
+		{
 			$this->db->commit();
 			return 1;
 		}
