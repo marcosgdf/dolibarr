@@ -1812,7 +1812,7 @@ class Facture extends CommonObject
                         $mouvP = new MouvementStock($this->db);
                         // We decrease stock for product
                         if ($this->type == 2) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
-                        else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
+                        else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));	// we use 0 for price, to not change the weighted average value
                     }
                 }
             }
@@ -2029,13 +2029,14 @@ class Facture extends CommonObject
      * 		@param		int			$type				Type of line (0=product, 1=service)
      * 		@param		int			$fk_parent_line		???
      * 		@param		int			$skip_update_total	???
+     *      @param		int			$special_code		Special code
      *      @return    	int             				< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $fk_unit=1, $skip_update_total=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $special_code=0, $fk_unit = 1)
     {
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
-        dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type, $fk_parent_line, $fk_unit", LOG_DEBUG);
+        dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type, $fk_parent_line, $special_code, $fk_unit", LOG_DEBUG);
 
         if ($this->brouillon)
         {
@@ -2044,6 +2045,7 @@ class Facture extends CommonObject
             // Clean parameters
             if (empty($qty)) $qty=0;
             if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
+            if (empty($special_code) || $special_code == 3) $special_code=0;
             if (empty($fk_unit)) $fk_unit=1;
 
             $remise_percent	= price2num($remise_percent);
@@ -2114,6 +2116,7 @@ class Facture extends CommonObject
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->fk_unit				= $fk_unit;
             $this->line->skip_update_total	= $skip_update_total;
+            $this->line->special_code		= $special_code;
 
             // A ne plus utiliser
             //$this->line->price=$price;
@@ -3334,6 +3337,7 @@ class Facture extends CommonObject
  */
 class FactureLigne extends CommonObjectLine
 {
+    var $db;
     var $error;
 
     var $oldline;
@@ -3653,6 +3657,7 @@ class FactureLigne extends CommonObjectLine
 		//if (empty($this->remise)) $this->remise=0;
 		if (empty($this->remise_percent)) $this->remise_percent=0;
 		if (empty($this->info_bits)) $this->info_bits=0;
+		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->product_type)) $this->product_type=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
@@ -3680,6 +3685,7 @@ class FactureLigne extends CommonObjectLine
         else { $sql.=',date_end=null'; }
         $sql.= ",product_type=".$this->product_type;
         $sql.= ",info_bits='".$this->info_bits."'";
+        $sql.= ",special_code='".$this->special_code."'";
         if (empty($this->skip_update_total))
         {
         	$sql.= ",total_ht=".price2num($this->total_ht)."";

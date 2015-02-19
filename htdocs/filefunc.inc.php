@@ -29,7 +29,7 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.2.2');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.2.4');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Define syslog constants
@@ -53,10 +53,8 @@ if (! defined('LOG_DEBUG'))
     }
 }
 
-// Force PHP error_reporting setup (Dolibarr may report warning without this)
-if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
-error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
-//error_reporting(E_ALL | E_STRICT);
+// End of common declaration part
+if (defined('DOL_INC_FOR_VERSION_ERROR')) return;
 
 
 // Define vars
@@ -77,12 +75,19 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 	exit;
 }
 
+// Force PHP error_reporting setup (Dolibarr may report warning without this)
+if (! empty($dolibarr_strict_mode))
+{
+	error_reporting(E_ALL | E_STRICT);
+}
+else
+{
+	if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
+	error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
+}
 
 // Disable php display errors
-if (! empty($dolibarr_main_prod))
-{
-	ini_set('display_errors','Off');
-}
+if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
 
 // Clean parameters
 $dolibarr_main_data_root=trim($dolibarr_main_data_root);
@@ -165,7 +170,7 @@ if (! $found)	// If autodetect fails (Ie: when using apache alias that point out
 {
 	$tmp=$dolibarr_main_url_root;
 }
-else $tmp='http'.((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
+else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]!=443))?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80||$_SERVER["SERVER_PORT"]==443)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
 
 if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);

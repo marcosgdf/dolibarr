@@ -219,10 +219,6 @@ if ($action == 'add' && $canadduser)
         		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
         	}
         }
-        else if (! empty($_POST["admin"]))
-        {
-        	$edituser->entity=0;
-        }
         else
         {
         	$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
@@ -336,10 +332,6 @@ if ($action == 'update' && ! $_POST["cancel"])
             	{
             		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
             	}
-            }
-            else if(! empty($_POST["admin"]))
-            {
-            	$edituser->entity=0;
             }
             else
             {
@@ -1128,9 +1120,9 @@ else
             print "</tr>\n";
 
             // Signature
-            print '<tr><td valign="top">'.$langs->trans('Signature').'</td>';
-            print '<td>'.$fuser->signature.'</td>';
-            print "</tr>\n";
+            print '<tr><td valign="top">'.$langs->trans('Signature').'</td><td>';
+            print dol_textishtml($fuser->signature)?$fuser->signature:dol_nl2br($fuser->signature,1,true);
+            print "</td></tr>\n";
 
             // Statut
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
@@ -1445,7 +1437,7 @@ else
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+            print '<input type="hidden" name="entity" value="'.$fuser->entity.'">';
             print '<table width="100%" class="border">';
 
             $rowspan=12;

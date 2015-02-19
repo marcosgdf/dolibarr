@@ -973,7 +973,11 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 
         $price_base_type = 'HT';
 
-        // Ecrase $pu par celui du produit
+	    // Define special_code for special lines
+	    $special_code=0;
+	    //if (empty($_POST['qty'])) $special_code=3;	// Options should not exists on invoices
+
+    	// Ecrase $pu par celui du produit
         // Ecrase $desc par celui du produit
         // Ecrase $txtva par celui du produit
         // Ecrase $base_price_type par celui du produit
@@ -1095,7 +1099,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
                     $pu_ttc,
                     $type,
                     -1,
-                    0,
+                    $special_code,
                     '',
                     0,
                     GETPOST('fk_parent_line'),

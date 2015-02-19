@@ -2175,7 +2175,7 @@ class Propal extends CommonObject
         $this->mode_reglement_id   = 7;
         $this->mode_reglement_code = 'CHQ';
         $this->availability_id     = 1;
-        $this->availability_code   = 'DSP';
+        $this->availability_code   = 'AV_NOW';
         $this->demand_reason_id    = 1;
         $this->demand_reason_code  = 'SRC_00';
         $this->note_public='This is a comment (public)';
@@ -2730,7 +2730,6 @@ class PropaleLigne extends CommonObjectLine
         }
         $sql.= " , marge_tx='".$this->marge_tx."'";
         $sql.= " , marque_tx='".$this->marque_tx."'";
-        $sql.= " , info_bits=".$this->info_bits;
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;

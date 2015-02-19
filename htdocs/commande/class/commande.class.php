@@ -2115,9 +2115,10 @@ class Commande extends CommonObject
      * 	@param		int				$type				Type of line (0=product, 1=service)
      *  @param		int				$fk_parent_line		Parent line id
      *  @param		int				$skip_update_total	Skip update of total
+     *  @param		int				$special_code		Special code
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $fk_unit=1, $skip_update_total=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $special_code=0, $fk_unit = 1)
     {
         global $conf;
 
@@ -2136,6 +2137,7 @@ class Commande extends CommonObject
             if (empty($txlocaltax2)) $txlocaltax2=0;
             if (empty($remise)) $remise=0;
             if (empty($remise_percent)) $remise_percent=0;
+            if (empty($special_code) || $special_code == 3) $special_code=0;
             if (empty($fk_unit)) $fk_unit=1;
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
@@ -2189,6 +2191,7 @@ class Commande extends CommonObject
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$subprice;
             $this->line->info_bits=$info_bits;
+            $this->line->special_code=$special_code;
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
             $this->line->total_localtax1=$total_localtax1;
@@ -2769,6 +2772,7 @@ class Commande extends CommonObject
  */
 class OrderLine extends CommonObjectLine
 {
+    var $db;
     var $error;
 
     var $oldline;
@@ -3051,6 +3055,7 @@ class OrderLine extends CommonObjectLine
         if (empty($this->remise)) $this->remise=0;
         if (empty($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
+        if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->product_type)) $this->product_type=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
@@ -3076,6 +3081,7 @@ class OrderLine extends CommonObjectLine
         $sql.= " , total_localtax1=".price2num($this->total_localtax1);
         $sql.= " , total_localtax2=".price2num($this->total_localtax2);
         $sql.= " , info_bits=".$this->info_bits;
+        $sql.= " , special_code=".$this->special_code;
         if ($this->date_start) { $sql.= " , date_start='".$this->db->idate($this->date_start)."'"; }
         else { $sql.=' , date_start=null'; }
         if ($this->date_end) { $sql.= " , date_end='".$this->db->idate($this->date_end)."'"; }

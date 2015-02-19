@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
- * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefo
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
@@ -581,6 +582,8 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
         //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+
+        $action='';
     }
 }
 
@@ -1749,7 +1752,7 @@ else
                 $form->select_produits_fournisseurs($object->socid,'','idprodfournprice','',$filtre);
 
                 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
-                
+
                 if (is_object($hookmanager))
 				{
 			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice');
@@ -1760,7 +1763,7 @@ else
 				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 				$doleditor = new DolEditor('np_desc', GETPOST('np_desc'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
 				$doleditor->Create();
-								
+
                 print '</td>';
                 print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
@@ -1777,14 +1780,19 @@ else
 
         if ($action != 'presend')
         {
-
             /*
              * Boutons actions
-            */
+             */
 
             print '<div class="tabsAction">';
 
-            // Reopen a standard paid invoice
+		    // Modify a validated invoice with no payments
+			if ($object->statut == 1 && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			}
+
+ 	 		// Reopen a standard paid invoice
             if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
             {
                 if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
