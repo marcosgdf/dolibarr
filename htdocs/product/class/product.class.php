@@ -4088,15 +4088,4 @@ class Product extends CommonObject
 
 		return 1;
 	}
-
-	public function getRights()
-	{
-		global $user;
-
-		if ($this->isproduct()) {
-			return $user->rights->produit;
-		} else {
-			return $user->rights->service;
-		}
-	}
 }
